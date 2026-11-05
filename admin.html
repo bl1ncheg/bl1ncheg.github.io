@@ -10,6 +10,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
+<script src="config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Oswald:wght@500;600;700&display=swap">
@@ -112,6 +113,18 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
 .field input, .field select, .field textarea { transition: border-color 0.25s ease, box-shadow 0.25s ease; }
 .field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent); }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+.req { display: grid; gap: 10px; padding: 18px 0; border-bottom: 1px solid var(--line); animation: fade 0.4s ease both; }
+.req-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 16px; }
+.req-head b { font: 700 1.4rem/1 var(--font-display); letter-spacing: 0.06em; color: var(--accent-ink); }
+.req-head time { font: 400 0.75rem/1 var(--font-mono); letter-spacing: 0.08em; color: var(--muted); }
+.req dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; font-size: 0.95rem; }
+.req dt { font: 500 0.7rem/1.9 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.req dd { margin: 0; overflow-wrap: anywhere; }
+.req .msg { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--bg); border: 1px solid var(--line); padding: 12px 14px; font-size: 0.95rem; }
+.req .ctrl { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.req select { font: 500 0.8rem/1 var(--font-mono); color: var(--fg); background: var(--bg); border: 1px solid var(--line); padding: 10px 12px; border-radius: 0; }
+.req.s-new .req-head b::after { content: " · новая"; font: 500 0.7rem/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg); }
 </style>
 </head>
 <body>
@@ -193,6 +206,22 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
         <div class="list" id="list"></div>
       </div>
     </div>
+  </section>
+
+  <section id="view-req" class="card">
+    <div><p class="eyebrow">Заявки с сайта</p><h2 style="margin-top:8px;">Входящие заявки</h2></div>
+    <form id="req-login" novalidate hidden>
+      <div class="field"><label for="r-pass">Пароль доступа к заявкам</label><input id="r-pass" type="password" autocomplete="off" spellcheck="false"></div>
+      <div class="actions"><button class="btn" type="submit" id="r-submit">Открыть заявки</button></div>
+    </form>
+    <div id="req-app" hidden>
+      <div class="actions">
+        <button class="btn small ghost" type="button" id="req-refresh">Обновить</button>
+        <button class="link-btn" type="button" id="req-logout">Закрыть доступ</button>
+      </div>
+      <div class="list" id="req-list"></div>
+    </div>
+    <p class="status" id="req-status" role="status" aria-live="polite"></p>
   </section>
 </main>
 
@@ -474,6 +503,119 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
       cfg = null; clearSaved(); showLogin(explain(err));
     });
   }
+})();
+</script>
+
+<script>
+(function () {
+  var API = (typeof window.HEV_API === 'string') ? window.HEV_API.trim().replace(/\/+$/, '') : '';
+  var KEY = 'hev_req';
+  var $ = function (id) { return document.getElementById(id); };
+  var pass = null, items = [], pendingDelete = null, busy = false;
+  var STATUS = { 'new': 'Новая', 'in_work': 'В работе', 'done': 'Готово' };
+
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  function setStatus(t, isErr) { var s = $('req-status'); s.textContent = t || ''; s.classList.toggle('err', !!(t && isErr)); }
+  function saved() { try { return sessionStorage.getItem(KEY); } catch (e) { return null; } }
+  function save(v) { try { if (v) sessionStorage.setItem(KEY, v); else sessionStorage.removeItem(KEY); } catch (e) {} }
+
+  function api(method, path, body) {
+    return fetch(API + path, {
+      method: method,
+      headers: Object.assign({ 'Authorization': 'Bearer ' + pass }, body ? { 'Content-Type': 'application/json' } : {}),
+      body: body ? JSON.stringify(body) : undefined
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (d) {
+        if (!r.ok) { var e = new Error('http'); e.status = r.status; throw e; }
+        return d;
+      });
+    });
+  }
+  function explain(e) {
+    if (e && e.status === 401) return 'Пароль не подошёл.';
+    if (e && e.status === 403) return 'Сервер не разрешил запрос с этого адреса. Проверьте ALLOWED_ORIGIN в настройках Worker.';
+    return 'Не удалось связаться с сервером заявок. Проверьте адрес в config.js и интернет.';
+  }
+
+  function render() {
+    var list = $('req-list');
+    list.textContent = '';
+    if (!items.length) { list.appendChild(el('p', 'empty', 'Заявок пока нет. Новые появятся здесь и придут в Telegram.')); return; }
+    items.forEach(function (x) {
+      var card = el('article', 'req s-' + x.status);
+      var head = el('div', 'req-head');
+      head.appendChild(el('b', null, x.number));
+      var t = el('time', null, new Date(x.created_at).toLocaleString('ru-RU'));
+      t.setAttribute('datetime', x.created_at);
+      head.appendChild(t);
+      card.appendChild(head);
+      var dl = el('dl');
+      [['Имя', x.name], ['Связь', x.contact], ['Услуга', x.service || 'не указана']].forEach(function (p) {
+        dl.appendChild(el('dt', null, p[0])); dl.appendChild(el('dd', null, p[1]));
+      });
+      card.appendChild(dl);
+      card.appendChild(el('div', 'msg', x.message));
+      var ctrl = el('div', 'ctrl');
+      var sel = el('select');
+      sel.setAttribute('aria-label', 'Статус заявки ' + x.number);
+      Object.keys(STATUS).forEach(function (k) {
+        var o = el('option', null, STATUS[k]); o.value = k; if (x.status === k) o.selected = true; sel.appendChild(o);
+      });
+      sel.addEventListener('change', function () {
+        var prev = x.status, next = sel.value;
+        api('PATCH', '/requests/' + x.id, { status: next }).then(function () { x.status = next; card.className = 'req s-' + next; setStatus('Статус обновлён.'); })
+          .catch(function (e) { sel.value = prev; setStatus(explain(e), true); });
+      });
+      ctrl.appendChild(sel);
+      if (pendingDelete === x.id) {
+        var yes = el('button', 'btn small', 'Да, удалить'); yes.type = 'button';
+        yes.addEventListener('click', function () { remove(x.id); });
+        var no = el('button', 'link-btn', 'Отмена'); no.type = 'button';
+        no.addEventListener('click', function () { pendingDelete = null; render(); });
+        ctrl.appendChild(yes); ctrl.appendChild(no);
+      } else {
+        var del = el('button', 'link-btn', 'Удалить'); del.type = 'button';
+        del.addEventListener('click', function () { pendingDelete = x.id; render(); });
+        ctrl.appendChild(del);
+      }
+      card.appendChild(ctrl);
+      list.appendChild(card);
+    });
+  }
+
+  function load() {
+    setStatus('Загружаю заявки…');
+    return api('GET', '/requests').then(function (d) {
+      items = Array.isArray(d.requests) ? d.requests : [];
+      setStatus(items.length ? 'Заявок: ' + items.length + '.' : '');
+      render();
+    });
+  }
+  function remove(id) {
+    if (busy) return; busy = true;
+    api('DELETE', '/requests/' + id).then(function () {
+      items = items.filter(function (x) { return x.id !== id; });
+      pendingDelete = null; setStatus('Заявка удалена.');
+    }).catch(function (e) { setStatus(explain(e), true); }).then(function () { busy = false; render(); });
+  }
+  function open() { $('req-login').hidden = true; $('req-app').hidden = false; }
+  function lock(msg) { pass = null; save(null); items = []; $('req-app').hidden = true; $('req-login').hidden = false; $('r-submit').disabled = false; setStatus(msg || '', !!msg); }
+
+  if (!API) { setStatus('Приём заявок не подключён. Укажите адрес сервера в файле config.js.', true); return; }
+  $('req-login').hidden = false;
+
+  $('req-login').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = $('r-pass').value;
+    if (!v) { setStatus('Введите пароль.', true); return; }
+    pass = v; $('r-submit').disabled = true;
+    load().then(function () { save(v); $('r-pass').value = ''; open(); }).catch(function (err) { lock(explain(err)); });
+  });
+  $('req-refresh').addEventListener('click', function () { load().catch(function (e) { setStatus(explain(e), true); }); });
+  $('req-logout').addEventListener('click', function () { lock(''); });
+
+  var s = saved();
+  if (s) { pass = s; load().then(open).catch(function (e) { lock(explain(e)); }); }
 })();
 </script>
 </body>
