@@ -4,7 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Black Mesa Information Technology: сайты, приложения, автоматизация и информационная безопасность для малого бизнеса.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 28'%3E%3Cpolygon points='0,26 9,4 31,4 40,26' fill='%23ffc20e'/%3E%3C/svg%3E">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
 <title>Black Mesa Information Technology</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -74,6 +78,7 @@ p { margin: 0; }
 .top { display: flex; justify-content: space-between; align-items: center; gap: 14px 24px; flex-wrap: wrap; padding-block: 20px; }
 .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
 .brand svg { width: 40px; height: 28px; flex: none; }
+.brand img { height: 36px; width: auto; max-width: 160px; flex: none; display: block; }
 .brand b { display: block; font: 600 1.3rem/1 var(--font-display); letter-spacing: 0.09em; }
 .brand small { display: block; margin-top: 4px; font: 400 0.64rem/1 var(--font-mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
 .nav { display: flex; gap: 6px 22px; flex-wrap: wrap; }
@@ -106,7 +111,13 @@ h1 span { color: var(--accent-ink); }
 .sign .name { flex: 1; min-width: 0; font: 600 1.2rem/1.15 var(--font-display); letter-spacing: 0.04em; text-transform: uppercase; }
 .sign .arrow { font: 500 1.3rem/1 var(--font-mono); }
 
-.hazard { height: 14px; background: repeating-linear-gradient(135deg, var(--accent) 0 16px, var(--bg) 16px 32px); }
+.hazard { position: relative; height: 16px; overflow: hidden; background: var(--bg); }
+.hazard::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -96px; right: -96px;
+  background: repeating-linear-gradient(90deg, var(--accent) 0 16px, var(--bg) 16px 32px);
+  transform: translateX(var(--shift, 0px)) skewX(-45deg);
+  will-change: transform;
+}
 
 /* Facts */
 .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -254,7 +265,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 
 <header class="wrap top">
   <a class="brand" href="#top" aria-label="Black Mesa Information Technology">
-    <svg viewBox="0 0 40 28" aria-hidden="true"><polygon points="0,26 9,4 31,4 40,26" fill="var(--accent)"/><rect x="0" y="22" width="40" height="4" fill="var(--bg)"/></svg>
+    <svg viewBox="0 0 40 28" aria-hidden="true"><polygon points="0,26 9,4 31,4 40,26" fill="var(--accent)"/><rect x="0" y="22" width="40" height="4" fill="var(--bg)"/></svg><img src="logo.png" alt="" hidden onload="this.hidden=false;this.previousElementSibling.hidden=true">
     <span><b>BLACK MESA</b><small>Information Technology</small></span>
   </a>
   <nav class="nav" aria-label="Разделы сайта">
@@ -490,6 +501,8 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   </section>
 </main>
 
+<div class="hazard" aria-hidden="true"></div>
+
 <footer>
   <div class="wrap">
     <span>© 2026 Black Mesa Information Technology</span>
@@ -539,6 +552,24 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       }).catch(fallback);
     } else { fallback(); }
   });
+})();
+</script>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) return;
+  var ticking = false;
+  function update() {
+    var shift = (window.scrollY * 0.6) % 32;
+    root.style.setProperty('--shift', shift.toFixed(2) + 'px');
+    ticking = false;
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; window.requestAnimationFrame(update); }
+  }, { passive: true });
+  update();
 })();
 </script>
 
