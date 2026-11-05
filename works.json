@@ -1,19 +1,6 @@
 {
   "works": [
     {
-      "id": "demo-bot",
-      "title": "Telegram-бот для приёма заявок",
-      "category": "B",
-      "description": "Концепт бота: принимает заявки от клиентов, уточняет детали и сохраняет всё в одну общую таблицу.",
-      "tags": [
-        "Python",
-        "SQLite"
-      ],
-      "link": "",
-      "image": "",
-      "concept": true
-    },
-    {
       "id": "demo-report",
       "title": "Еженедельный отчёт без ручной работы",
       "category": "C",
