@@ -9,6 +9,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
+<script src="config.js"></script>
 <title>HEV Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -186,6 +187,8 @@ form { display: grid; gap: 16px; }
 .result pre { margin: 0; white-space: pre-wrap; word-break: break-word; font: 400 0.9rem/1.55 var(--font-mono); }
 .result .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 .result .note { font-size: 0.9rem; color: var(--muted); }
+.req-number { margin: 0; font: 700 clamp(2rem, 6vw, 3rem)/1 var(--font-display); letter-spacing: 0.06em; color: var(--accent-ink); }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
 footer { border-top: 1px solid var(--line); padding-block: 28px; }
 footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; font: 400 0.76rem/1.4 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
@@ -353,7 +356,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 <header class="wrap top">
   <a class="brand" href="#top" aria-label="HEV Studio">
     <svg viewBox="0 0 40 28" aria-hidden="true"><polygon points="0,26 9,4 31,4 40,26" fill="var(--accent)"/><rect x="0" y="22" width="40" height="4" fill="var(--bg)"/></svg><img src="logo.png" alt="" hidden onload="this.hidden=false;this.previousElementSibling.hidden=true">
-    <span><b>HYBRID ENGINEERING & DEVELOPMENT STUDIO</b><small>IT-решения под ключ</small></span>
+    <span><b>HEV STUDIO</b><small>IT-решения под ключ</small></span>
   </a>
   <nav class="nav" aria-label="Разделы сайта">
     <a href="#services">Услуги</a>
@@ -550,7 +553,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       <div>
         <p class="eyebrow">Контакты</p>
         <h2>Расскажите о задаче</h2>
-        <p style="margin-top: 16px; color: var(--muted); max-width: 46ch;">Заполните короткую анкету. Страница соберёт текст заявки, который можно скопировать и отправить мне на почту. Отвечаю в течение рабочего дня.</p>
+        <p style="margin-top: 16px; color: var(--muted); max-width: 46ch;">Заполните короткую анкету, и заявка сразу попадёт ко мне. Вы получите её номер. Отвечаю в течение рабочего дня.</p>
         <div class="mail">
           <p class="stack-title">Почта</p>
           <code data-email>bl1ncheg@yandex.ru</code>
@@ -573,14 +576,18 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
             </select>
           </div>
           <div class="field"><label for="f-msg">Задача в двух словах</label><textarea id="f-msg" name="message" required></textarea></div>
-          <button class="btn" type="submit">Собрать заявку</button>
+          <div class="hp" aria-hidden="true"><label for="f-site">Сайт</label><input id="f-site" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+          <button class="btn" type="submit" id="f-submit">Отправить заявку</button>
           <p id="f-error" class="note" role="alert" hidden style="color: var(--accent-ink); font-size: 0.9rem;">Заполните имя, контакт и описание задачи.</p>
         </form>
         <div class="result" id="result" hidden>
-          <pre id="brief-text"></pre>
+          <p class="stack-title" id="res-title" style="margin:0;"></p>
+          <p class="req-number" id="res-number" hidden></p>
+          <p id="res-text"></p>
+          <pre id="brief-text" hidden></pre>
           <div class="row">
-            <button class="btn" type="button" id="copy">Скопировать текст</button>
-            <span class="note" id="copy-note">Вставьте текст в письмо на адрес слева.</span>
+            <button class="btn" type="button" id="copy">Скопировать</button>
+            <span class="note" id="copy-note"></span>
           </div>
         </div>
       </div>
@@ -592,7 +599,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 
 <footer>
   <div class="wrap">
-    <span>© 2026 Hybrid Engineering & Development Studio</span>
+    <span>© 2026 HEV Studio</span>
     <span>Сайты · Приложения · Автоматизация · Безопасность</span>
   </div>
 </footer>
@@ -601,41 +608,106 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 (function () {
   var form = document.getElementById('brief');
   var result = document.getElementById('result');
+  var resTitle = document.getElementById('res-title');
+  var resNumber = document.getElementById('res-number');
+  var resText = document.getElementById('res-text');
   var out = document.getElementById('brief-text');
   var err = document.getElementById('f-error');
   var note = document.getElementById('copy-note');
-  var defaultNote = note.textContent;
+  var copyBtn = document.getElementById('copy');
+  var submitBtn = document.getElementById('f-submit');
+  var API = (typeof window.HEV_API === 'string') ? window.HEV_API.trim().replace(/\/+$/, '') : '';
+  var copyValue = '';
+
+  function val(id) { return document.getElementById(id).value.trim(); }
+
+  function compose(d) {
+    return 'Здравствуйте! Меня зовут ' + d.name + '.\nИнтересует: ' + d.service + '.\n\nЗадача: ' + d.message + '\n\nСвязаться со мной: ' + d.contact;
+  }
+
+  function showOk(number) {
+    resTitle.textContent = 'Заявка зарегистрирована';
+    resNumber.textContent = number;
+    resNumber.hidden = false;
+    resText.textContent = 'Номер вашей заявки ' + number + '. Сохраните его: по нему мы найдём заявку, когда вы напишете или позвоните. Свяжусь с вами в течение рабочего дня.';
+    out.hidden = true;
+    copyValue = number;
+    copyBtn.textContent = 'Скопировать номер';
+    note.textContent = '';
+    result.hidden = false;
+  }
+
+  function showFallback(reason, text) {
+    resTitle.textContent = 'Заявка пока не отправлена';
+    resNumber.hidden = true;
+    resText.textContent = reason;
+    out.textContent = text;
+    out.hidden = false;
+    copyValue = text;
+    copyBtn.textContent = 'Скопировать текст';
+    note.textContent = 'Вставьте текст в письмо на адрес слева.';
+    result.hidden = false;
+  }
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-    var name = form.elements.name.value.trim();
-    var contact = form.elements.contact.value.trim();
-    var msg = form.elements.message.value.trim();
-    var service = form.elements.service.value;
-    if (!name || !contact || !msg) { err.hidden = false; result.hidden = true; return; }
+    var d = { name: val('f-name'), contact: val('f-contact'), message: val('f-msg'), service: document.getElementById('f-service').value };
+    if (!d.name || !d.contact || !d.message) { err.hidden = false; result.hidden = true; return; }
     err.hidden = true;
-    out.textContent = 'Здравствуйте! Меня зовут ' + name + '.\nИнтересует: ' + service + '.\n\nЗадача: ' + msg + '\n\nСвязаться со мной: ' + contact;
-    note.textContent = defaultNote;
-    result.hidden = false;
+    var text = compose(d);
+
+    if (!API) {
+      showFallback('Приём заявок на сайте ещё не подключён. Скопируйте текст и отправьте его на почту.', text);
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Отправляю…';
+    var ctl = new AbortController();
+    var timer = setTimeout(function () { ctl.abort(); }, 15000);
+
+    fetch(API + '/requests', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: d.name, contact: d.contact, service: d.service, message: d.message, website: document.getElementById('f-site').value }),
+      signal: ctl.signal
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (data) { return { status: r.status, data: data }; });
+    }).then(function (x) {
+      if (x.status === 201 && x.data && x.data.number) {
+        showOk(x.data.number);
+        form.reset();
+      } else if (x.status === 429) {
+        showFallback('Слишком много заявок подряд. Подождите несколько минут и отправьте снова или напишите на почту.', text);
+      } else {
+        throw new Error('bad status');
+      }
+    }).catch(function () {
+      showFallback('Не удалось отправить заявку. Проверьте интернет и повторите или отправьте текст на почту.', text);
+    }).then(function () {
+      clearTimeout(timer);
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Отправить заявку';
+    });
   });
 
-  document.getElementById('copy').addEventListener('click', function () {
-    var text = out.textContent;
+  copyBtn.addEventListener('click', function () {
     function fallback() {
+      var target = out.hidden ? resNumber : out;
       try {
         var r = document.createRange();
-        r.selectNodeContents(out);
+        r.selectNodeContents(target);
         var s = window.getSelection();
         s.removeAllRanges();
         s.addRange(r);
-        note.textContent = 'Текст выделен. Нажмите Ctrl+C или «Копировать» в меню.';
+        note.textContent = 'Выделено. Нажмите Ctrl+C или «Копировать» в меню.';
       } catch (x) {
         note.textContent = 'Выделите текст вручную и скопируйте его.';
       }
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(function () {
-        note.textContent = 'Скопировано. Вставьте текст в письмо.';
+      navigator.clipboard.writeText(copyValue).then(function () {
+        note.textContent = 'Скопировано.';
       }).catch(fallback);
     } else { fallback(); }
   });
