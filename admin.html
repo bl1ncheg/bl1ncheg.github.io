@@ -27,6 +27,7 @@
   :root { --bg: #e7eaec; --surface: #f6f7f8; --line: #c2c9cf; --fg: #11161a; --muted: #4d5964; --on-accent: #11161a; --accent-ink: #7a5400; color-scheme: light; }
 }
 *, *::before, *::after { box-sizing: border-box; }
+a { color: inherit; }
 [hidden] { display: none !important; }
 body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--font-body); -webkit-text-size-adjust: 100%; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
@@ -125,6 +126,14 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
 .req .ctrl { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
 .req select { font: 500 0.8rem/1 var(--font-mono); color: var(--fg); background: var(--bg); border: 1px solid var(--line); padding: 10px 12px; border-radius: 0; }
 .req.s-new .req-head b::after { content: " · новая"; font: 500 0.7rem/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg); }
+
+.tabs { display: flex; flex-wrap: wrap; gap: 4px 8px; margin-bottom: 28px; border-bottom: 1px solid var(--line); }
+.tab { display: inline-flex; align-items: center; gap: 10px; margin-bottom: -1px; padding: 14px 18px; background: transparent; color: var(--muted); border: 0; border-bottom: 3px solid transparent; cursor: pointer; font: 600 1.05rem/1 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.25s ease, border-color 0.25s ease; }
+.tab:hover { color: var(--fg); }
+.tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
+.count { min-width: 1.7em; padding: 4px 7px; background: var(--accent); color: var(--on-accent); font: 700 0.8rem/1 var(--font-mono); text-align: center; }
+.locked { padding: 24px; border: 1px dashed var(--line); display: grid; gap: 14px; justify-items: start; color: var(--muted); }
+.pane { display: grid; gap: 32px; }
 </style>
 </head>
 <body>
@@ -142,31 +151,61 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
 <main class="wrap">
   <section id="view-login" class="card">
     <p class="eyebrow">Вход</p>
-    <h1>Управление работами</h1>
-    <p class="muted">Для входа нужен личный токен GitHub с доступом к репозиторию сайта. Он хранится только в вашем браузере и отправляется только на api.github.com.</p>
-    <details>
-      <summary>Как получить токен</summary>
-      <ol>
-        <li>Откройте GitHub: <strong>Settings → Developer settings → Personal access tokens → Fine-grained tokens</strong> и нажмите <strong>Generate new token</strong>.</li>
-        <li>В поле <strong>Repository access</strong> выберите <strong>Only select repositories</strong> и укажите репозиторий сайта.</li>
-        <li>В <strong>Repository permissions</strong> поставьте <strong>Contents: Read and write</strong>. Других прав не нужно.</li>
-        <li>Выберите срок действия, создайте токен и скопируйте его. GitHub показывает токен один раз.</li>
-      </ol>
-    </details>
+    <h1>Админ-панель</h1>
+    <p class="muted">Один вход для заявок и работ. Достаточно заполнить то, чем собираетесь пользоваться. Данные хранятся только в вашем браузере.</p>
     <form id="login" novalidate>
-      <div class="field"><label for="l-token">Токен GitHub</label><input id="l-token" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…"></div>
-      <div class="two">
-        <div class="field"><label for="l-repo">Репозиторий</label><input id="l-repo" type="text" value="bl1ncheg/bl1ncheg.github.io" autocomplete="off" spellcheck="false"></div>
-        <div class="field"><label for="l-branch">Ветка</label><input id="l-branch" type="text" value="main" autocomplete="off" spellcheck="false"></div>
+      <div class="field">
+        <label for="l-pass">Пароль заявок</label>
+        <input id="l-pass" type="password" autocomplete="off" spellcheck="false">
+        <span class="hint">Значение ADMIN_TOKEN, которое вы задали в настройках Cloudflare.</span>
       </div>
-      <label class="check" for="l-remember"><input id="l-remember" type="checkbox"><span>Запомнить на этом устройстве. Не включайте на чужом компьютере.</span></label>
+      <div class="field">
+        <label for="l-token">Токен GitHub</label>
+        <input id="l-token" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…">
+        <span class="hint">Нужен только для раздела «Работы».</span>
+      </div>
+      <details>
+        <summary>Репозиторий и как получить токен GitHub</summary>
+        <ol>
+          <li>Откройте GitHub: <strong>Settings → Developer settings → Personal access tokens → Fine-grained tokens</strong> и нажмите <strong>Generate new token</strong>.</li>
+          <li>В поле <strong>Repository access</strong> выберите <strong>Only select repositories</strong> и укажите репозиторий сайта.</li>
+          <li>В <strong>Repository permissions</strong> поставьте <strong>Contents: Read and write</strong>. Других прав не нужно.</li>
+          <li>Создайте токен и скопируйте его. GitHub показывает токен один раз.</li>
+        </ol>
+        <div class="two" style="margin-top:14px;">
+          <div class="field"><label for="l-repo">Репозиторий</label><input id="l-repo" type="text" value="bl1ncheg/bl1ncheg.github.io" autocomplete="off" spellcheck="false"></div>
+          <div class="field"><label for="l-branch">Ветка</label><input id="l-branch" type="text" value="main" autocomplete="off" spellcheck="false"></div>
+        </div>
+      </details>
+      <label class="check" for="l-remember"><input id="l-remember" type="checkbox" checked><span>Запомнить на этом устройстве, чтобы входить сразу. Не включайте на чужом компьютере.</span></label>
       <div class="actions"><button class="btn" type="submit" id="l-submit">Войти</button></div>
       <p class="status" id="login-status" role="status" aria-live="polite"></p>
     </form>
   </section>
 
   <section id="view-app" hidden>
-    <div style="display:grid;gap:32px;">
+    <div class="tabs" role="tablist" aria-label="Разделы админ-панели">
+      <button class="tab" role="tab" type="button" id="tab-req" aria-controls="pane-req" aria-selected="true">Заявки <span class="count" id="req-count" hidden>0</span></button>
+      <button class="tab" role="tab" type="button" id="tab-works" aria-controls="pane-works" aria-selected="false">Работы</button>
+    </div>
+
+    <div id="pane-req" role="tabpanel" aria-labelledby="tab-req">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+          <div><p class="eyebrow">Заявки с сайта</p><h2 style="margin-top:8px;">Входящие заявки</h2></div>
+          <button class="btn small ghost" type="button" id="req-refresh">Обновить</button>
+        </div>
+        <div id="req-locked" class="locked" hidden></div>
+        <div id="req-content">
+          <p class="status" id="req-status" role="status" aria-live="polite"></p>
+          <div class="list" id="req-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="pane-works" role="tabpanel" aria-labelledby="tab-works" hidden>
+      <div id="works-locked" class="locked" hidden></div>
+      <div id="works-content" class="pane">
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
           <div><p class="eyebrow">Новая запись</p><h2 style="margin-top:8px;">Добавить работу</h2></div>
@@ -205,23 +244,8 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
         <p class="status" id="app-status" role="status" aria-live="polite"></p>
         <div class="list" id="list"></div>
       </div>
-    </div>
-  </section>
-
-  <section id="view-req" class="card">
-    <div><p class="eyebrow">Заявки с сайта</p><h2 style="margin-top:8px;">Входящие заявки</h2></div>
-    <form id="req-login" novalidate hidden>
-      <div class="field"><label for="r-pass">Пароль доступа к заявкам</label><input id="r-pass" type="password" autocomplete="off" spellcheck="false"></div>
-      <div class="actions"><button class="btn" type="submit" id="r-submit">Открыть заявки</button></div>
-    </form>
-    <div id="req-app" hidden>
-      <div class="actions">
-        <button class="btn small ghost" type="button" id="req-refresh">Обновить</button>
-        <button class="link-btn" type="button" id="req-logout">Закрыть доступ</button>
       </div>
-      <div class="list" id="req-list"></div>
     </div>
-    <p class="status" id="req-status" role="status" aria-live="polite"></p>
   </section>
 </main>
 
@@ -338,35 +362,6 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
     }).catch(function () { return file; });
   }
 
-  /* ---------- storage of login ---------- */
-  function readSaved() {
-    var v = null;
-    try { v = sessionStorage.getItem(KEY) || localStorage.getItem(KEY); } catch (e) {}
-    if (!v) return null;
-    try { var o = JSON.parse(v); return (o && o.token && o.owner && o.repo) ? o : null; } catch (e) { return null; }
-  }
-  function writeSaved(remember) {
-    clearSaved();
-    var v = JSON.stringify({ token: cfg.token, owner: cfg.owner, repo: cfg.repo, branch: cfg.branch });
-    try { (remember ? localStorage : sessionStorage).setItem(KEY, v); } catch (e) {}
-  }
-  function clearSaved() {
-    try { sessionStorage.removeItem(KEY); } catch (e) {}
-    try { localStorage.removeItem(KEY); } catch (e) {}
-  }
-
-  /* ---------- views ---------- */
-  function showLogin(msg) {
-    $('view-login').hidden = false; $('view-app').hidden = true; $('logout').hidden = true;
-    setStatus('login-status', msg || '', !!msg);
-    $('l-submit').disabled = false;
-  }
-  function showApp() {
-    $('view-login').hidden = true; $('view-app').hidden = false; $('logout').hidden = false;
-    $('l-token').value = '';
-    renderList();
-  }
-
   function renderList() {
     var list = $('list');
     list.textContent = '';
@@ -427,32 +422,6 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
       .then(function () { busy = false; renderList(); });
   }
 
-  $('login').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var token = $('l-token').value.trim();
-    var parts = $('l-repo').value.trim().split('/');
-    var branch = $('l-branch').value.trim() || 'main';
-    if (!token || parts.length !== 2 || !parts[0] || !parts[1]) {
-      setStatus('login-status', 'Введите токен и репозиторий в формате владелец/репозиторий.', true);
-      return;
-    }
-    cfg = { token: token, owner: parts[0], repo: parts[1], branch: branch };
-    $('l-submit').disabled = true;
-    setStatus('login-status', 'Проверяю доступ…');
-    loadWorksChecked().then(function () {
-      writeSaved($('l-remember').checked);
-      showApp();
-    }).catch(function (err) {
-      cfg = null;
-      showLogin(explain(err));
-    });
-  });
-
-  $('logout').addEventListener('click', function () {
-    clearSaved(); cfg = null; works = []; sha = null; pendingDelete = null;
-    showLogin('');
-  });
-
   $('add-toggle').addEventListener('click', function () {
     var f = $('add-form');
     f.hidden = !f.hidden;
@@ -493,16 +462,13 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
     }).then(function () { busy = false; $('w-submit').disabled = false; renderList(); });
   });
 
-  /* ---------- start ---------- */
-  var saved = readSaved();
-  if (saved) {
-    cfg = saved;
-    $('l-submit').disabled = true;
-    setStatus('login-status', 'Проверяю сохранённый вход…');
-    loadWorksChecked().then(showApp).catch(function (err) {
-      cfg = null; clearSaved(); showLogin(explain(err));
-    });
-  }
+  window.HEVWorks = {
+    start: function (c) {
+      cfg = c; sha = null; works = [];
+      return loadWorksChecked().then(function () { renderList(); }).catch(function (e) { cfg = null; throw new Error(explain(e)); });
+    },
+    stop: function () { cfg = null; works = []; sha = null; pendingDelete = null; $('list').textContent = ''; setStatus('app-status', ''); }
+  };
 })();
 </script>
 
@@ -563,7 +529,7 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
       });
       sel.addEventListener('change', function () {
         var prev = x.status, next = sel.value;
-        api('PATCH', '/requests/' + x.id, { status: next }).then(function () { x.status = next; card.className = 'req s-' + next; setStatus('Статус обновлён.'); })
+        api('PATCH', '/requests/' + x.id, { status: next }).then(function () { x.status = next; card.className = 'req s-' + next; emitCount(); setStatus('Статус обновлён.'); })
           .catch(function (e) { sel.value = prev; setStatus(explain(e), true); });
       });
       ctrl.appendChild(sel);
@@ -583,39 +549,191 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
     });
   }
 
-  function load() {
-    setStatus('Загружаю заявки…');
+  function load(silent) {
+    if (!silent) setStatus('Загружаю заявки…');
     return api('GET', '/requests').then(function (d) {
-      items = Array.isArray(d.requests) ? d.requests : [];
-      setStatus(items.length ? 'Заявок: ' + items.length + '.' : '');
-      render();
+      var next = Array.isArray(d.requests) ? d.requests : [];
+      var changed = JSON.stringify(next) !== JSON.stringify(items);
+      items = next;
+      if (!silent) setStatus(items.length ? 'Заявок: ' + items.length + '.' : '');
+      if (changed || !silent) render();
+      emitCount();
     });
   }
   function remove(id) {
     if (busy) return; busy = true;
     api('DELETE', '/requests/' + id).then(function () {
-      items = items.filter(function (x) { return x.id !== id; });
+      items = items.filter(function (x) { return x.id !== id; }); emitCount();
       pendingDelete = null; setStatus('Заявка удалена.');
     }).catch(function (e) { setStatus(explain(e), true); }).then(function () { busy = false; render(); });
   }
-  function open() { $('req-login').hidden = true; $('req-app').hidden = false; }
-  function lock(msg) { pass = null; save(null); items = []; $('req-app').hidden = true; $('req-login').hidden = false; $('r-submit').disabled = false; setStatus(msg || '', !!msg); }
+  var countCb = null;
+  function emitCount() { if (countCb) countCb(items.filter(function (x) { return x.status === 'new'; }).length); }
 
-  if (!API) { setStatus('Приём заявок не подключён. Укажите адрес сервера в файле config.js.', true); return; }
-  $('req-login').hidden = false;
+  window.HEVReq = {
+    available: !!API,
+    onCount: function (fn) { countCb = fn; },
+    start: function (p) {
+      if (!API) return Promise.reject(new Error('Адрес сервера заявок не указан в config.js.'));
+      pass = p; items = [];
+      return load(false).catch(function (e) { pass = null; throw new Error(explain(e)); });
+    },
+    refresh: function (silent) {
+      if (!pass) return Promise.resolve();
+      return load(!!silent).catch(function (e) { if (!silent) setStatus(explain(e), true); });
+    },
+    stop: function () { pass = null; items = []; pendingDelete = null; $('req-list').textContent = ''; setStatus(''); emitCount(); }
+  };
+  $('req-refresh').addEventListener('click', function () { window.HEVReq.refresh(false); });
+})();
+</script>
+<script>
+(function () {
+  var KEY = 'hev_admin2';
+  var BASE_TITLE = document.title;
+  var $ = function (id) { return document.getElementById(id); };
+  var HASH = { req: 'requests', works: 'works' };
+  var timer = null, remembered = true;
 
-  $('req-login').addEventListener('submit', function (e) {
+  function read() {
+    var v = null;
+    try { v = localStorage.getItem(KEY); remembered = !!v; if (!v) { v = sessionStorage.getItem(KEY); } } catch (e) {}
+    if (!v) return null;
+    try { return JSON.parse(v); } catch (e) { return null; }
+  }
+  function write(obj, remember) {
+    clear();
+    try { (remember ? localStorage : sessionStorage).setItem(KEY, JSON.stringify(obj)); } catch (e) {}
+  }
+  function clear() {
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    try { sessionStorage.removeItem(KEY); } catch (e) {}
+  }
+  function status(t, isErr) { var s = $('login-status'); s.textContent = t || ''; s.classList.toggle('err', !!(t && isErr)); }
+
+  function showLogin(msg) {
+    $('view-login').hidden = false; $('view-app').hidden = true; $('logout').hidden = true;
+    $('l-submit').disabled = false;
+    status(msg || '', !!msg);
+    if (timer) { clearInterval(timer); timer = null; }
+  }
+  function showApp() {
+    $('view-login').hidden = true; $('view-app').hidden = false; $('logout').hidden = false;
+    $('l-pass').value = ''; $('l-token').value = '';
+  }
+
+  function setTab(name, updateHash) {
+    ['req', 'works'].forEach(function (k) {
+      var on = (k === name);
+      $('tab-' + k).setAttribute('aria-selected', String(on));
+      $('pane-' + k).hidden = !on;
+    });
+    if (updateHash !== false) { try { history.replaceState(null, '', '#' + HASH[name]); } catch (e) {} }
+  }
+  function tabFromHash() {
+    var h = (location.hash || '').replace('#', '');
+    return h === 'works' ? 'works' : (h === 'requests' ? 'req' : null);
+  }
+
+  function lockPane(name, message) {
+    var box = $(name + '-locked'), content = $(name + '-content');
+    box.textContent = '';
+    if (!message) { box.hidden = true; content.hidden = false; return; }
+    var p = document.createElement('p'); p.style.margin = '0'; p.textContent = message;
+    var b = document.createElement('button'); b.className = 'btn small ghost'; b.type = 'button'; b.textContent = 'Ввести данные';
+    b.addEventListener('click', logout);
+    box.appendChild(p); box.appendChild(b);
+    box.hidden = false; content.hidden = true;
+  }
+
+  function setCount(n) {
+    var c = $('req-count');
+    c.textContent = String(n); c.hidden = !n;
+    document.title = n ? '(' + n + ') ' + BASE_TITLE : BASE_TITLE;
+  }
+
+  function attempt(c, remember) {
+    var res = { req: null, works: null };
+    var jobs = [];
+    if (c.pass) {
+      jobs.push(window.HEVReq.start(c.pass).then(function () { res.req = true; }, function (e) { res.req = e.message; }));
+    }
+    if (c.token) {
+      var parts = String(c.repo || '').split('/');
+      if (parts.length !== 2 || !parts[0] || !parts[1]) {
+        res.works = 'Репозиторий нужно указать в виде владелец/репозиторий.';
+      } else {
+        jobs.push(window.HEVWorks.start({ token: c.token, owner: parts[0], repo: parts[1], branch: c.branch || 'main' })
+          .then(function () { res.works = true; }, function (e) { res.works = e.message; }));
+      }
+    }
+    if (!c.pass && !c.token) { showLogin('Введите пароль заявок или токен GitHub.'); return Promise.resolve(); }
+
+    return Promise.all(jobs).then(function () {
+      var okReq = res.req === true, okWorks = res.works === true;
+      if (!okReq && !okWorks) {
+        var msgs = [];
+        if (typeof res.req === 'string') msgs.push('Заявки: ' + res.req);
+        if (typeof res.works === 'string') msgs.push('Работы: ' + res.works);
+        showLogin(msgs.join(' '));
+        return;
+      }
+      var keep = { repo: c.repo, branch: c.branch };
+      if (okReq) keep.pass = c.pass;
+      if (okWorks) keep.token = c.token;
+      write(keep, remember);
+
+      lockPane('req', okReq ? '' : (typeof res.req === 'string' ? res.req : 'Вы не вводили пароль заявок.'));
+      lockPane('works', okWorks ? '' : (typeof res.works === 'string' ? res.works : 'Вы не вводили токен GitHub.'));
+      showApp();
+      var want = tabFromHash();
+      if (want === 'req' && !okReq && okWorks) want = 'works';
+      if (want === 'works' && !okWorks && okReq) want = 'req';
+      setTab(want || (okReq ? 'req' : 'works'), false);
+
+      if (okReq) {
+        timer = setInterval(function () { if (!document.hidden) window.HEVReq.refresh(true); }, 60000);
+      }
+    });
+  }
+
+  function logout() {
+    window.HEVReq.stop(); window.HEVWorks.stop();
+    clear(); setCount(0);
+    try { history.replaceState(null, '', location.pathname); } catch (e) {}
+    showLogin('');
+  }
+
+  window.HEVReq.onCount(setCount);
+
+  $('login').addEventListener('submit', function (e) {
     e.preventDefault();
-    var v = $('r-pass').value;
-    if (!v) { setStatus('Введите пароль.', true); return; }
-    pass = v; $('r-submit').disabled = true;
-    load().then(function () { save(v); $('r-pass').value = ''; open(); }).catch(function (err) { lock(explain(err)); });
+    $('l-submit').disabled = true;
+    status('Проверяю доступ…');
+    attempt({
+      pass: $('l-pass').value,
+      token: $('l-token').value.trim(),
+      repo: $('l-repo').value.trim(),
+      branch: $('l-branch').value.trim() || 'main'
+    }, $('l-remember').checked);
   });
-  $('req-refresh').addEventListener('click', function () { load().catch(function (e) { setStatus(explain(e), true); }); });
-  $('req-logout').addEventListener('click', function () { lock(''); });
+  $('logout').addEventListener('click', logout);
+  $('tab-req').addEventListener('click', function () { setTab('req'); });
+  $('tab-works').addEventListener('click', function () { setTab('works'); });
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && timer) window.HEVReq.refresh(true);
+  });
+  window.addEventListener('hashchange', function () {
+    var t = tabFromHash();
+    if (t && !$('view-app').hidden) setTab(t, false);
+  });
 
-  var s = saved();
-  if (s) { pass = s; load().then(open).catch(function (e) { lock(explain(e)); }); }
+  var saved = read();
+  if (saved && (saved.pass || saved.token)) {
+    $('l-submit').disabled = true;
+    status('Проверяю сохранённый вход…');
+    attempt(saved, remembered);
+  }
 })();
 </script>
 </body>
