@@ -1,15 +1,15 @@
-<!doctype html>
+  <!doctype html>
 <html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Black Mesa Information Technology: сайты, приложения, автоматизация и информационная безопасность для малого бизнеса.">
+<meta name="description" content="HEV Studio: сайты, приложения, автоматизация и информационная безопасность для малого бизнеса.">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
-<title>Black Mesa Information Technology</title>
+<title>HEV Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Oswald:wght@500;600;700&display=swap">
@@ -257,6 +257,93 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   .steps li, .steps li + li, .steps li:nth-child(even) { padding: 0; border-left: 0; }
   .btn { flex: 1 1 100%; }
 }
+/* Motion */
+@keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+@keyframes reveal-in { from { opacity: 0.2; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+@keyframes slide-in { from { opacity: 0; transform: translateX(36px); } to { opacity: 1; transform: none; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+.top { animation: fade 0.7s ease both; }
+.hero .eyebrow { animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.05s both; }
+.hero h1 { animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both; }
+.hero .lead { animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s both; }
+.hero .cta { animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.42s both; }
+.sign { animation: slide-in 1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.25s both; }
+.sign a { animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.sign a:nth-of-type(1) { animation-delay: 0.5s; }
+.sign a:nth-of-type(2) { animation-delay: 0.6s; }
+.sign a:nth-of-type(3) { animation-delay: 0.7s; }
+.sign a:nth-of-type(4) { animation-delay: 0.8s; }
+
+.reveal { opacity: 0.2; transform: translateY(28px); }
+.reveal.in { animation: reveal-in 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms) both; }
+
+.progress { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; height: 3px; background: var(--accent); transform: scaleX(var(--p, 0)); transform-origin: 0 50%; z-index: 50; pointer-events: none; }
+
+.work { animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.work:nth-child(2) { animation-delay: 70ms; }
+.work:nth-child(3) { animation-delay: 140ms; }
+.work:nth-child(4) { animation-delay: 210ms; }
+.work:nth-child(5) { animation-delay: 280ms; }
+.work:nth-child(n+6) { animation-delay: 350ms; }
+.works-note { animation: fade 0.5s ease both; }
+.result:not([hidden]), #f-error:not([hidden]), .add-panel:not([hidden]) { animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+
+.brand svg, .brand img { transition: scale 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.brand:hover svg, .brand:hover img { scale: 1.08; }
+.nav a { transition: color 0.25s ease, border-color 0.25s ease; }
+.btn { transition: translate 0.25s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.25s ease, background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease; }
+.btn:hover { translate: 0 -3px; }
+.btn:active { translate: 0 0; }
+.filter { transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, translate 0.25s ease; }
+.filter:hover { translate: 0 -2px; }
+.link-btn { transition: color 0.25s ease; }
+
+.sign a { transition: background-color 0.3s ease, color 0.3s ease; }
+.sign .tag { transition: background-color 0.3s ease, color 0.3s ease, rotate 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.sign .arrow { transition: translate 0.3s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.sign a:hover .arrow { translate: 8px 0; }
+.sign a:hover .tag { rotate: -8deg; }
+
+.svc { transition: border-color 0.3s ease, translate 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), background-color 0.3s ease; }
+.svc:hover { border-color: var(--accent); translate: 0 -5px; }
+.svc .tag { transition: rotate 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), scale 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.svc:hover .tag { rotate: -8deg; scale: 1.1; }
+.svc li::before { transition: scale 0.3s ease; }
+.svc:hover li::before { scale: 1.3; }
+
+.principle { transition: border-color 0.3s ease; }
+.principle:hover { border-top-color: var(--accent); }
+.steps h3 { transition: color 0.3s ease; }
+.steps li:hover h3 { color: var(--accent-ink); }
+.steps .n { transition: letter-spacing 0.35s ease; }
+.steps li:hover .n { letter-spacing: 0.3em; }
+
+.task { transition: background-color 0.3s ease; }
+.task:hover { background: var(--surface); }
+.task .arrow { transition: translate 0.3s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.task:hover .arrow { translate: 8px 0; }
+
+.chip { transition: border-color 0.25s ease, translate 0.25s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.chip:hover { border-color: var(--accent); translate: 0 -3px; }
+
+.work { transition: border-color 0.3s ease, translate 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.work:hover { border-color: var(--accent); translate: 0 -5px; }
+.work .cover img { transition: scale 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.work:hover .cover img { scale: 1.06; }
+.work .plate { transition: scale 0.45s cubic-bezier(0.2, 0.7, 0.2, 1), rotate 0.45s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.work:hover .plate { scale: 1.1; rotate: -4deg; }
+.work a.open { transition: letter-spacing 0.3s ease; }
+.work a.open:hover { letter-spacing: 0.14em; }
+
+.field input, .field select, .field textarea { transition: border-color 0.25s ease, box-shadow 0.25s ease; }
+.field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  .progress { display: none; }
+}
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
 </head>
@@ -264,9 +351,9 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 
 
 <header class="wrap top">
-  <a class="brand" href="#top" aria-label="Black Mesa Information Technology">
+  <a class="brand" href="#top" aria-label="HEV Studio">
     <svg viewBox="0 0 40 28" aria-hidden="true"><polygon points="0,26 9,4 31,4 40,26" fill="var(--accent)"/><rect x="0" y="22" width="40" height="4" fill="var(--bg)"/></svg><img src="logo.png" alt="" hidden onload="this.hidden=false;this.previousElementSibling.hidden=true">
-    <span><b>BLACK MESA</b><small>Information Technology</small></span>
+    <span><b>HEV STUDIO</b><small>IT-решения под ключ</small></span>
   </a>
   <nav class="nav" aria-label="Разделы сайта">
     <a href="#services">Услуги</a>
@@ -283,7 +370,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       <div>
         <p class="eyebrow">Разработка и ИТ-инфраструктура</p>
         <h1>Делаем сайты, приложения и автоматизацию. <span>Защищаем то, что построили.</span></h1>
-        <p class="lead">Black Mesa Information Technology создаёт информационные решения для малого бизнеса и частных специалистов. Один исполнитель ведёт проект от первого разговора до резервных копий после запуска.</p>
+        <p class="lead">HEV Studio создаёт информационные решения для малого бизнеса и частных специалистов. Один исполнитель ведёт проект от первого разговора до резервных копий после запуска.</p>
         <div class="cta">
           <a class="btn" href="#contact">Обсудить проект</a>
           <a class="btn ghost" href="#services">Смотреть услуги</a>
@@ -446,7 +533,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
         <h2 style="margin-bottom: 24px;">Программист с опытом администратора</h2>
         <div class="prose">
           <p>Я окончил университет по направлению фуллстек разработчик. Параллельно с учёбой <strong>два года работал системным администратором</strong>: обслуживал серверы и сети, настраивал доступы, чинил то, что сломалось в самый неудобный момент.</p>
-          <p>Black Mesa Information Technology объединяет эти два навыка. Я пишу код и сам знаю, как он будет работать на сервере через год, поэтому закладываю надёжность в проект сразу.</p>
+          <p>HEV Studio объединяет эти два навыка. Я пишу код и сам знаю, как он будет работать на сервере через год, поэтому закладываю надёжность в проект сразу.</p>
         </div>
       </div>
       <div>
@@ -466,7 +553,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
         <p style="margin-top: 16px; color: var(--muted); max-width: 46ch;">Заполните короткую анкету. Страница соберёт текст заявки, который можно скопировать и отправить мне на почту. Отвечаю в течение рабочего дня.</p>
         <div class="mail">
           <p class="stack-title">Почта</p>
-          <code data-email>bl1ncheg@yandex.ru</code>
+          <code data-email>hello@hev-studio.example</code>
         </div>
       </div>
       <div>
@@ -505,7 +592,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 
 <footer>
   <div class="wrap">
-    <span>© 2026 Black Mesa Information Technology</span>
+    <span>© 2026 HEV Studio</span>
     <span>Сайты · Приложения · Автоматизация · Безопасность</span>
   </div>
 </footer>
@@ -560,16 +647,65 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   var root = document.documentElement;
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduce) return;
-  var ticking = false;
-  function update() {
-    var shift = (window.scrollY * 0.6) % 32;
-    root.style.setProperty('--shift', shift.toFixed(2) + 'px');
-    ticking = false;
+
+  /* scroll progress bar and gliding hazard stripes */
+  var bar = document.createElement('div');
+  bar.className = 'progress';
+  bar.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(bar);
+
+  var target = 0, cur = 0, raf = 0;
+  function apply() { root.style.setProperty('--shift', (cur % 32).toFixed(2) + 'px'); }
+  function frame() {
+    cur += (target - cur) * 0.14;
+    if (Math.abs(target - cur) < 0.05) { cur = target; raf = 0; } else { raf = window.requestAnimationFrame(frame); }
+    apply();
   }
-  window.addEventListener('scroll', function () {
-    if (!ticking) { ticking = true; window.requestAnimationFrame(update); }
-  }, { passive: true });
-  update();
+  function onScroll() {
+    var y = window.scrollY || 0;
+    var max = (root.scrollHeight - window.innerHeight) || 1;
+    root.style.setProperty('--p', Math.min(1, y / max).toFixed(4));
+    target = y * 0.6;
+    if (!raf) raf = window.requestAnimationFrame(frame);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  target = (window.scrollY || 0) * 0.6; cur = target; apply(); onScroll();
+
+  /* reveal on scroll */
+  if (!('IntersectionObserver' in window)) return;
+
+  function countUp(b) {
+    var n = parseInt(b.textContent, 10);
+    if (!n || n < 1) return;
+    var t0 = null, dur = 900;
+    b.textContent = '0';
+    function step(ts) {
+      if (t0 === null) t0 = ts;
+      var p = Math.min(1, (ts - t0) / dur);
+      b.textContent = String(Math.round(n * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) window.requestAnimationFrame(step); else b.textContent = String(n);
+    }
+    window.requestAnimationFrame(step);
+  }
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (!en.isIntersecting) return;
+      var t = en.target;
+      t.classList.add('in');
+      io.unobserve(t);
+      if (t.classList.contains('fact')) { var b = t.querySelector('b'); if (b) countUp(b); }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+
+  var items = document.querySelectorAll('.sec-head, .svc, .principle, .steps li, .task, .about > div, .contact > div, .fact, .works-bar');
+  Array.prototype.forEach.call(items, function (t) {
+    var idx = Array.prototype.indexOf.call(t.parentNode.children, t);
+    t.style.setProperty('--d', Math.min(idx, 5) * 90 + 'ms');
+    t.classList.add('reveal');
+    io.observe(t);
+  });
 })();
 </script>
 
