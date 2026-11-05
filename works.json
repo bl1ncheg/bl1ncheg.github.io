@@ -1,3 +1,19 @@
 {
-  "works": []
+  "works": [
+    {
+      "id": "wmw3c11uska4z",
+      "title": "Сайт для молодых преподавателей",
+      "category": "A",
+      "description": "Сайт с возможностью молодым преподавателям делиться своей базой знаний, разграниченным доступом к ресурсу, а также возможностью добавлять видеоуроки.",
+      "tags": [
+        "PostgreSQL",
+        "CSS",
+        "Express",
+        "HTML"
+      ],
+      "link": "https://methodicalmaterials.ru/",
+      "image": "uploads/wmw3c11uska4z.jpg",
+      "concept": false
+    }
+  ]
 }
