@@ -1,809 +1,479 @@
-  <!doctype html>
+<!doctype html>
 <html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="HEV Studio: сайты, приложения, автоматизация и информационная безопасность для малого бизнеса.">
+<meta name="robots" content="noindex, nofollow">
+<title>HEV Studio · Админ-панель</title>
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
-<title>HEV Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Oswald:wght@500;600;700&display=swap">
 <style>
-[hidden]{display:none!important}
-img{max-width:100%}
-/* Layout concept: a research-facility directory. Yellow signage plate in the hero doubles as the service index; sections read like labelled sectors. */
 :root {
-  --bg: #0d1013;
-  --surface: #151a1f;
-  --line: #29313a;
-  --fg: #e9ecee;
-  --muted: #98a3ad;
-  --accent: #ffc20e;
-  --on-accent: #0d1013;
-  --accent-ink: #ffc20e;
+  --bg: #0d1013; --surface: #151a1f; --line: #29313a; --fg: #e9ecee; --muted: #98a3ad;
+  --accent: #ffc20e; --on-accent: #0d1013; --accent-ink: #ffc20e;
   --font-display: 'Oswald', 'Arial Narrow', Impact, sans-serif;
   --font-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
   color-scheme: dark;
 }
 @media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --bg: #e7eaec; --surface: #f6f7f8; --line: #c2c9cf; --fg: #11161a; --muted: #4d5964;
-    --accent: #ffc20e; --on-accent: #11161a; --accent-ink: #7a5400; color-scheme: light;
-  }
+  :root { --bg: #e7eaec; --surface: #f6f7f8; --line: #c2c9cf; --fg: #11161a; --muted: #4d5964; --on-accent: #11161a; --accent-ink: #7a5400; color-scheme: light; }
 }
-:root[data-theme="light"] {
-  --bg: #e7eaec; --surface: #f6f7f8; --line: #c2c9cf; --fg: #11161a; --muted: #4d5964;
-  --accent: #ffc20e; --on-accent: #11161a; --accent-ink: #7a5400; color-scheme: light;
-}
-
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--fg);
-  font: 16px/1.6 var(--font-body);
-  -webkit-text-size-adjust: 100%;
-}
-a { color: inherit; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--font-body); -webkit-text-size-adjust: 100%; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-
-.wrap {
-  max-width: 1120px;
-  margin-inline: auto;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-}
-.mono { font-family: var(--font-mono); }
-.eyebrow {
-  font: 500 0.75rem/1.2 var(--font-mono);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--accent-ink);
-  display: flex; align-items: center; gap: 10px;
-  margin: 0 0 16px;
-}
-.eyebrow::before { content: ""; width: 10px; height: 10px; background: var(--accent); flex: none; }
-h1, h2, h3 { font-family: var(--font-display); text-transform: uppercase; margin: 0; text-wrap: balance; }
-h2 { font-weight: 600; font-size: clamp(1.9rem, 4.6vw, 3rem); line-height: 1.05; letter-spacing: 0.01em; }
+.wrap { max-width: 920px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--font-display); text-transform: uppercase; margin: 0; text-wrap: balance; letter-spacing: 0.02em; }
+h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.05; font-weight: 700; }
+h2 { font-size: 1.5rem; font-weight: 600; }
 p { margin: 0; }
+.muted { color: var(--muted); }
 
-/* Header */
-.top { display: flex; justify-content: space-between; align-items: center; gap: 14px 24px; flex-wrap: wrap; padding-block: 20px; }
+.top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px 24px; padding-block: 20px; border-bottom: 1px solid var(--line); }
 .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
 .brand svg { width: 40px; height: 28px; flex: none; }
 .brand img { height: 36px; width: auto; max-width: 160px; flex: none; display: block; }
 .brand b { display: block; font: 600 1.3rem/1 var(--font-display); letter-spacing: 0.09em; }
 .brand small { display: block; margin-top: 4px; font: 400 0.64rem/1 var(--font-mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
-.nav { display: flex; gap: 6px 22px; flex-wrap: wrap; }
-.nav a { font: 500 0.78rem/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-decoration: none; padding-block: 8px; border-bottom: 2px solid transparent; }
-.nav a:hover { color: var(--fg); border-bottom-color: var(--accent); }
+.top-actions { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; }
+.top-actions a, .link-btn { font: 500 0.75rem/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); background: none; border: 0; padding: 8px 0; cursor: pointer; text-decoration: underline; }
+.top-actions a:hover, .link-btn:hover { color: var(--fg); }
 
-/* Hero */
-.hero { padding-block: clamp(36px, 7vw, 88px) clamp(40px, 6vw, 72px); }
-.hero-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 64px); align-items: center; }
-h1 { font-weight: 700; font-size: clamp(2.3rem, 6.4vw, 4.6rem); line-height: 1; letter-spacing: 0.005em; }
-h1 span { color: var(--accent-ink); }
-.lead { margin-top: 24px; max-width: 54ch; color: var(--muted); font-size: 1.08rem; }
-.cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
-.btn {
-  display: inline-block; cursor: pointer; text-decoration: none; text-align: center;
-  font: 600 1rem/1 var(--font-display); letter-spacing: 0.1em; text-transform: uppercase;
-  padding: 16px 24px; border: 2px solid var(--accent); background: var(--accent); color: var(--on-accent);
-}
-.btn:hover { filter: brightness(1.08); }
-.btn.ghost { background: transparent; color: var(--fg); border-color: var(--line); }
-.btn.ghost:hover { border-color: var(--accent); filter: none; }
+main { padding-block: 40px 72px; display: grid; gap: 32px; }
+.card { background: var(--surface); border: 1px solid var(--line); padding: 24px; display: grid; gap: 16px; min-width: 0; }
+.eyebrow { font: 500 0.72rem/1 var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-ink); }
 
-.sign { background: var(--accent); color: var(--on-accent); }
-.sign-head { padding: 14px 18px; border-bottom: 3px solid var(--on-accent); font: 500 0.72rem/1 var(--font-mono); letter-spacing: 0.18em; text-transform: uppercase; display: flex; justify-content: space-between; gap: 12px; }
-.sign a { display: flex; align-items: center; gap: 14px; padding: 16px 18px; text-decoration: none; border-bottom: 3px solid var(--on-accent); }
-.sign a:last-child { border-bottom: 0; }
-.sign a:hover { background: var(--on-accent); color: var(--accent); }
-.sign a:hover .tag { background: var(--accent); color: var(--on-accent); }
-.sign .tag { flex: none; width: 36px; height: 36px; display: grid; place-items: center; background: var(--on-accent); color: var(--accent); font: 700 1.3rem/1 var(--font-display); }
-.sign .name { flex: 1; min-width: 0; font: 600 1.2rem/1.15 var(--font-display); letter-spacing: 0.04em; text-transform: uppercase; }
-.sign .arrow { font: 500 1.3rem/1 var(--font-mono); }
-
-.hazard { position: relative; height: 16px; overflow: hidden; background: var(--bg); }
-.hazard::before {
-  content: ""; position: absolute; top: 0; bottom: 0; left: -96px; right: -96px;
-  background: repeating-linear-gradient(90deg, var(--accent) 0 16px, var(--bg) 16px 32px);
-  transform: translateX(var(--shift, 0px)) skewX(-45deg);
-  will-change: transform;
-}
-
-/* Facts */
-.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.fact { padding: 28px 24px 28px 0; display: flex; gap: 16px; align-items: baseline; }
-.fact + .fact { padding-left: 24px; border-left: 1px solid var(--line); }
-.fact b { font: 600 3rem/1 var(--font-display); color: var(--accent-ink); font-variant-numeric: tabular-nums; }
-.fact span { color: var(--muted); font-size: 0.95rem; line-height: 1.4; min-width: 0; }
-
-/* Sections */
-.sec { border-top: 1px solid var(--line); padding-block: clamp(52px, 8vw, 96px); }
-.sec-head { max-width: 62ch; margin-bottom: clamp(28px, 4vw, 48px); }
-.sec-head p { margin-top: 16px; color: var(--muted); }
-
-.services { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
-.svc { background: var(--surface); border: 1px solid var(--line); padding: 28px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
-.svc-top { display: flex; align-items: center; gap: 14px; }
-.svc .tag { flex: none; width: 36px; height: 36px; display: grid; place-items: center; background: var(--accent); color: var(--on-accent); font: 700 1.3rem/1 var(--font-display); }
-.svc h3 { font-weight: 600; font-size: 1.55rem; line-height: 1.1; letter-spacing: 0.03em; }
-.svc > p { color: var(--muted); }
-.svc ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.svc li { position: relative; padding-left: 22px; }
-.svc li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 8px; height: 8px; background: var(--accent); }
-.svc .for { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); font-size: 0.92rem; color: var(--muted); }
-.svc .for b { font: 500 0.7rem/1 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-ink); display: block; margin-bottom: 6px; }
-
-.principles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
-.principle { border-top: 3px solid var(--fg); padding-top: 18px; min-width: 0; }
-.principle h3 { font-weight: 600; font-size: 1.35rem; line-height: 1.15; letter-spacing: 0.03em; margin-bottom: 10px; }
-.principle p { color: var(--muted); }
-
-.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; counter-reset: s; }
-.steps li { padding: 0 24px 0 0; min-width: 0; }
-.steps li + li { padding-left: 24px; border-left: 1px solid var(--line); }
-.steps .n { font: 500 0.8rem/1 var(--font-mono); letter-spacing: 0.14em; color: var(--accent-ink); display: block; margin-bottom: 14px; }
-.steps h3 { font-weight: 600; font-size: 1.3rem; letter-spacing: 0.03em; margin-bottom: 8px; }
-.steps p { color: var(--muted); font-size: 0.95rem; }
-
-.tasks { border-top: 1px solid var(--line); }
-.task { display: grid; grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr); gap: 16px; align-items: start; padding-block: 22px; border-bottom: 1px solid var(--line); }
-.task .arrow { font: 500 1.4rem/1.4 var(--font-mono); color: var(--accent-ink); text-align: center; }
-.task .label { display: block; font: 500 0.7rem/1 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-.task .fix { font-weight: 500; }
-
-.about { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 64px); }
-.about .prose { display: grid; gap: 16px; color: var(--muted); max-width: 62ch; }
-.about .prose strong { color: var(--fg); font-weight: 600; }
-.stack-title { font: 500 0.72rem/1 var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { font: 400 0.84rem/1 var(--font-mono); padding: 9px 12px; border: 1px solid var(--line); background: var(--surface); }
-
-.contact { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(32px, 5vw, 64px); align-items: start; }
-.mail { margin-top: 28px; }
-.mail .stack-title { margin-bottom: 8px; }
-.mail code { font: 500 1.15rem/1.3 var(--font-mono); word-break: break-all; user-select: all; }
 form { display: grid; gap: 16px; }
 .field { display: grid; gap: 6px; min-width: 0; }
 .field label { font: 500 0.72rem/1 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
-.field input, .field select, .field textarea {
-  width: 100%; font: 400 1rem/1.4 var(--font-body); color: var(--fg); background: var(--surface);
-  border: 1px solid var(--line); padding: 13px 14px; border-radius: 0;
-}
-.field textarea { min-height: 120px; resize: vertical; }
+.field input, .field select, .field textarea { width: 100%; font: 400 1rem/1.4 var(--font-body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); padding: 13px 14px; border-radius: 0; }
+.field textarea { min-height: 110px; resize: vertical; }
 .field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible { outline-offset: 0; border-color: var(--accent); }
+.hint { font-size: 0.85rem; color: var(--muted); }
 .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.result { margin-top: 8px; border: 1px solid var(--accent); padding: 18px; display: grid; gap: 14px; }
-.result pre { margin: 0; white-space: pre-wrap; word-break: break-word; font: 400 0.9rem/1.55 var(--font-mono); }
-.result .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-.result .note { font-size: 0.9rem; color: var(--muted); }
-
-footer { border-top: 1px solid var(--line); padding-block: 28px; }
-footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; font: 400 0.76rem/1.4 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-
-/* Works */
-.works-bar { display: flex; justify-content: space-between; align-items: center; gap: 14px 24px; flex-wrap: wrap; margin-bottom: 24px; }
-.filters { display: flex; flex-wrap: wrap; gap: 8px; }
-.filter { font: 500 0.75rem/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; padding: 11px 13px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; }
-.filter:hover { color: var(--fg); border-color: var(--accent); }
-.filter[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-.admin-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
-.badge-admin { font: 500 0.7rem/1 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; padding: 10px 12px; border: 1px solid var(--accent); color: var(--accent-ink); }
-.btn.small { padding: 12px 16px; font-size: 0.9rem; }
-.works-status { min-height: 1.4em; margin: 0 0 16px; font: 400 0.85rem/1.4 var(--font-mono); color: var(--accent-ink); }
-.add-panel { background: var(--surface); border: 1px solid var(--accent); padding: 24px; margin-bottom: 28px; }
-.add-panel h3 { font-weight: 600; font-size: 1.3rem; letter-spacing: 0.03em; }
-.add-panel .hint { font-size: 0.85rem; color: var(--muted); }
 .check { display: flex; gap: 10px; align-items: flex-start; font-size: 0.95rem; }
 .check input { margin-top: 4px; accent-color: var(--accent); flex: none; }
-.form-actions { display: flex; flex-wrap: wrap; gap: 12px; }
-.works { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-.works-note { grid-column: 1 / -1; padding: 32px; border: 1px dashed var(--line); color: var(--muted); }
-.work { background: var(--surface); border: 1px solid var(--line); display: flex; flex-direction: column; min-width: 0; }
-.work .cover { aspect-ratio: 16 / 10; max-width: 100%; position: relative; overflow: hidden; background: var(--line); display: grid; place-items: center; }
-.work .cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.work .cover.plate-cover { background: var(--accent); color: var(--on-accent); }
-.work .cover.plate-cover::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 10px; background: repeating-linear-gradient(135deg, var(--on-accent) 0 10px, transparent 10px 20px); }
-.work .plate { font: 700 5rem/1 var(--font-display); }
-.work .body { padding: 20px; display: flex; flex-direction: column; gap: 12px; flex: 1; min-width: 0; }
-.work .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font: 500 0.68rem/1.2 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
-.work .badge { border: 1px solid var(--accent-ink); color: var(--accent-ink); padding: 4px 6px; }
-.work h3 { font-weight: 600; font-size: 1.35rem; line-height: 1.15; letter-spacing: 0.03em; overflow-wrap: anywhere; }
-.work p { color: var(--muted); font-size: 0.95rem; overflow-wrap: anywhere; }
-.work .tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.work .tags span { font: 400 0.75rem/1 var(--font-mono); padding: 6px 8px; border: 1px solid var(--line); }
-.work .foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
-.work .foot:empty { display: none; }
-.work a.open { font: 600 0.9rem/1 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); text-decoration: none; border-bottom: 2px solid var(--accent); padding-bottom: 3px; }
-.link-btn { background: none; border: 0; padding: 8px 0; color: var(--muted); font: 500 0.72rem/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; text-decoration: underline; }
-.link-btn:hover { color: var(--fg); }
+.btn { display: inline-block; cursor: pointer; text-align: center; font: 600 1rem/1 var(--font-display); letter-spacing: 0.1em; text-transform: uppercase; padding: 15px 22px; border: 2px solid var(--accent); background: var(--accent); color: var(--on-accent); }
+.btn:hover { filter: brightness(1.08); }
+.btn:disabled { opacity: 0.6; cursor: wait; }
+.btn.ghost { background: transparent; color: var(--fg); border-color: var(--line); }
+.btn.ghost:hover { border-color: var(--accent); filter: none; }
+.btn.small { padding: 11px 15px; font-size: 0.85rem; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; }
 
-@media (max-width: 900px) {
-  .works { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
+details { border: 1px solid var(--line); padding: 14px 16px; }
+summary { cursor: pointer; font: 500 0.8rem/1.4 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+details ol { margin: 14px 0 0; padding-left: 20px; display: grid; gap: 8px; color: var(--muted); font-size: 0.95rem; }
+details strong { color: var(--fg); font-weight: 600; }
+code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px; border: 1px solid var(--line); overflow-wrap: anywhere; }
+
+.status { min-height: 1.5em; font: 400 0.88rem/1.5 var(--font-mono); color: var(--accent-ink); overflow-wrap: anywhere; }
+.status.err { color: var(--fg); border-left: 3px solid var(--accent); padding-left: 10px; }
+
+.list { display: grid; gap: 0; border-top: 1px solid var(--line); }
+.row { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.thumb { width: 56px; height: 56px; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; font: 700 1.6rem/1 var(--font-display); overflow: hidden; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.row h3 { font-size: 1.1rem; line-height: 1.2; font-weight: 600; overflow-wrap: anywhere; }
+.row .meta { font: 400 0.72rem/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+.row .ctrl { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: flex-end; }
+.empty { padding: 28px; border: 1px dashed var(--line); color: var(--muted); }
+
 @media (max-width: 620px) {
-  .works { grid-template-columns: minmax(0, 1fr); }
-  .add-panel { padding: 18px; }
-}
-
-@media (max-width: 900px) {
-  .hero-grid, .about, .contact { grid-template-columns: minmax(0, 1fr); }
-  .principles { grid-template-columns: minmax(0, 1fr); gap: 28px; }
-  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 32px; }
-  .steps li:nth-child(odd) { padding-left: 0; border-left: 0; }
-  .steps li:nth-child(even) { padding-right: 0; }
-}
-@media (max-width: 720px) {
-  .services { grid-template-columns: minmax(0, 1fr); }
-  .facts { grid-template-columns: minmax(0, 1fr); }
-  .fact, .fact + .fact { padding: 20px 0; border-left: 0; }
-  .fact + .fact { border-top: 1px solid var(--line); }
-  .task { grid-template-columns: minmax(0, 1fr); gap: 8px; }
-  .task .arrow { text-align: left; transform: rotate(90deg); width: 1.4em; }
   .two { grid-template-columns: minmax(0, 1fr); }
-  .svc { padding: 22px; }
+  .card { padding: 18px; }
+  .row { grid-template-columns: 48px minmax(0, 1fr); }
+  .thumb { width: 48px; height: 48px; }
+  .row .ctrl { grid-column: 1 / -1; justify-content: flex-start; }
 }
-@media (max-width: 520px) {
-  .steps { grid-template-columns: minmax(0, 1fr); }
-  .steps li, .steps li + li, .steps li:nth-child(even) { padding: 0; border-left: 0; }
-  .btn { flex: 1 1 100%; }
-}
-/* Motion */
-@keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
-@keyframes reveal-in { from { opacity: 0.2; transform: translateY(28px); } to { opacity: 1; transform: none; } }
-@keyframes slide-in { from { opacity: 0; transform: translateX(36px); } to { opacity: 1; transform: none; } }
+
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
-
-.top { animation: fade 0.7s ease both; }
-.hero .eyebrow { animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.05s both; }
-.hero h1 { animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both; }
-.hero .lead { animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s both; }
-.hero .cta { animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.42s both; }
-.sign { animation: slide-in 1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.25s both; }
-.sign a { animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-.sign a:nth-of-type(1) { animation-delay: 0.5s; }
-.sign a:nth-of-type(2) { animation-delay: 0.6s; }
-.sign a:nth-of-type(3) { animation-delay: 0.7s; }
-.sign a:nth-of-type(4) { animation-delay: 0.8s; }
-
-.reveal { opacity: 0.2; transform: translateY(28px); }
-.reveal.in { animation: reveal-in 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms) both; }
-
-.progress { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; height: 3px; background: var(--accent); transform: scaleX(var(--p, 0)); transform-origin: 0 50%; z-index: 50; pointer-events: none; }
-
-.work { animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-.work:nth-child(2) { animation-delay: 70ms; }
-.work:nth-child(3) { animation-delay: 140ms; }
-.work:nth-child(4) { animation-delay: 210ms; }
-.work:nth-child(5) { animation-delay: 280ms; }
-.work:nth-child(n+6) { animation-delay: 350ms; }
-.works-note { animation: fade 0.5s ease both; }
-.result:not([hidden]), #f-error:not([hidden]), .add-panel:not([hidden]) { animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-
-.brand svg, .brand img { transition: scale 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.brand:hover svg, .brand:hover img { scale: 1.08; }
-.nav a { transition: color 0.25s ease, border-color 0.25s ease; }
+.top { animation: fade 0.6s ease both; }
+.card { animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.card + .card { animation-delay: 0.1s; }
+.row { animation: fade 0.4s ease both; transition: background-color 0.25s ease; }
+.row:hover { background: var(--surface); }
+.empty, .status:not(:empty) { animation: fade 0.4s ease both; }
+#add-form:not([hidden]) { animation: rise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 .btn { transition: translate 0.25s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.25s ease, background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease; }
 .btn:hover { translate: 0 -3px; }
 .btn:active { translate: 0 0; }
-.filter { transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, translate 0.25s ease; }
-.filter:hover { translate: 0 -2px; }
-.link-btn { transition: color 0.25s ease; }
-
-.sign a { transition: background-color 0.3s ease, color 0.3s ease; }
-.sign .tag { transition: background-color 0.3s ease, color 0.3s ease, rotate 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.sign .arrow { transition: translate 0.3s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.sign a:hover .arrow { translate: 8px 0; }
-.sign a:hover .tag { rotate: -8deg; }
-
-.svc { transition: border-color 0.3s ease, translate 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), background-color 0.3s ease; }
-.svc:hover { border-color: var(--accent); translate: 0 -5px; }
-.svc .tag { transition: rotate 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), scale 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.svc:hover .tag { rotate: -8deg; scale: 1.1; }
-.svc li::before { transition: scale 0.3s ease; }
-.svc:hover li::before { scale: 1.3; }
-
-.principle { transition: border-color 0.3s ease; }
-.principle:hover { border-top-color: var(--accent); }
-.steps h3 { transition: color 0.3s ease; }
-.steps li:hover h3 { color: var(--accent-ink); }
-.steps .n { transition: letter-spacing 0.35s ease; }
-.steps li:hover .n { letter-spacing: 0.3em; }
-
-.task { transition: background-color 0.3s ease; }
-.task:hover { background: var(--surface); }
-.task .arrow { transition: translate 0.3s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.task:hover .arrow { translate: 8px 0; }
-
-.chip { transition: border-color 0.25s ease, translate 0.25s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.chip:hover { border-color: var(--accent); translate: 0 -3px; }
-
-.work { transition: border-color 0.3s ease, translate 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.work:hover { border-color: var(--accent); translate: 0 -5px; }
-.work .cover img { transition: scale 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.work:hover .cover img { scale: 1.06; }
-.work .plate { transition: scale 0.45s cubic-bezier(0.2, 0.7, 0.2, 1), rotate 0.45s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.work:hover .plate { scale: 1.1; rotate: -4deg; }
-.work a.open { transition: letter-spacing 0.3s ease; }
-.work a.open:hover { letter-spacing: 0.14em; }
-
+.link-btn, .top-actions a { transition: color 0.25s ease; }
+.brand svg, .brand img { transition: scale 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.brand:hover svg, .brand:hover img { scale: 1.08; }
 .field input, .field select, .field textarea { transition: border-color 0.25s ease, box-shadow 0.25s ease; }
 .field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent); }
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; }
-  .reveal { opacity: 1 !important; transform: none !important; }
-  .progress { display: none; }
-}
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
-
-
 <header class="wrap top">
-  <a class="brand" href="#top" aria-label="HEV Studio">
+  <a class="brand" href="./" aria-label="На сайт">
     <svg viewBox="0 0 40 28" aria-hidden="true"><polygon points="0,26 9,4 31,4 40,26" fill="var(--accent)"/><rect x="0" y="22" width="40" height="4" fill="var(--bg)"/></svg><img src="logo.png" alt="" hidden onload="this.hidden=false;this.previousElementSibling.hidden=true">
-    <span><b>HEV STUDIO</b><small>IT-решения под ключ</small></span>
+    <span><b>HEV STUDIO</b><small>Админ-панель</small></span>
   </a>
-  <nav class="nav" aria-label="Разделы сайта">
-    <a href="#services">Услуги</a>
-    <a href="#works">Работы</a>
-    <a href="#approach">Подход</a>
-    <a href="#about">Обо мне</a>
-    <a href="#contact">Контакты</a>
-  </nav>
+  <div class="top-actions">
+    <a href="./">Открыть сайт</a>
+    <button class="link-btn" type="button" id="logout" hidden>Выйти</button>
+  </div>
 </header>
 
-<main id="top">
-  <section class="hero">
-    <div class="wrap hero-grid">
-      <div>
-        <p class="eyebrow">Разработка и ИТ-инфраструктура</p>
-        <h1>Делаем сайты, приложения и автоматизацию. <span>Защищаем то, что построили.</span></h1>
-        <p class="lead">HEV Studio создаёт информационные решения для малого бизнеса и частных специалистов. Один исполнитель ведёт проект от первого разговора до резервных копий после запуска.</p>
-        <div class="cta">
-          <a class="btn" href="#contact">Обсудить проект</a>
-          <a class="btn ghost" href="#services">Смотреть услуги</a>
-        </div>
-      </div>
-      <nav class="sign" aria-label="Указатель услуг">
-        <div class="sign-head"><span>Указатель услуг</span><span>4 направления</span></div>
-        <a href="#svc-web"><span class="tag">A</span><span class="name">Сайты и веб-сервисы</span><span class="arrow" aria-hidden="true">→</span></a>
-        <a href="#svc-app"><span class="tag">B</span><span class="name">Приложения и боты</span><span class="arrow" aria-hidden="true">→</span></a>
-        <a href="#svc-auto"><span class="tag">C</span><span class="name">Автоматизация</span><span class="arrow" aria-hidden="true">→</span></a>
-        <a href="#svc-sec"><span class="tag">D</span><span class="name">Информационная безопасность</span><span class="arrow" aria-hidden="true">→</span></a>
-      </nav>
-    </div>
-  </section>
-
-  <div class="hazard" aria-hidden="true"></div>
-
-  <div class="wrap facts">
-    <div class="fact"><b>2</b><span>года работы системным администратором</span></div>
-    <div class="fact"><b>4</b><span>направления: сайты, приложения, автоматизация, безопасность</span></div>
-    <div class="fact"><b>1</b><span>исполнитель, который отвечает за результат и на связи с вами</span></div>
-  </div>
-
-  <section class="sec" id="services">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">Услуги</p>
-        <h2>Что я делаю для клиентов</h2>
-        <p>Работаю над одним направлением или соединяю несколько: например, сайт, бот для заявок и резервное копирование в одном проекте.</p>
-      </div>
-      <div class="services">
-        <article class="svc" id="svc-web">
-          <div class="svc-top"><span class="tag">A</span><h3>Сайты и веб-сервисы</h3></div>
-          <p>Сайты компаний, лендинги, интернет-витрины и личные кабинеты, которые быстро открываются и удобны с телефона.</p>
-          <ul>
-            <li>Современный адаптивный дизайн и вёрстка</li>
-            <li>Формы заявок, почта, интеграция с CRM</li>
-            <li>Домен, хостинг, SSL и базовое SEO</li>
-          </ul>
-          <div class="for"><b>Подходит, если</b>клиентам нужно найти вас в интернете и оставить заявку.</div>
-        </article>
-        <article class="svc" id="svc-app">
-          <div class="svc-top"><span class="tag">B</span><h3>Приложения и боты</h3></div>
-          <p>Веб-приложения, внутренние сервисы для команды и Telegram-боты для клиентов и сотрудников.</p>
-          <ul>
-            <li>Прототип и согласование до написания кода</li>
-            <li>Серверная часть и база данных</li>
-            <li>Публикация, обновления и поддержка</li>
-          </ul>
-          <div class="for"><b>Подходит, если</b>процесс держится на таблицах и переписке в мессенджерах.</div>
-        </article>
-        <article class="svc" id="svc-auto">
-          <div class="svc-top"><span class="tag">C</span><h3>Автоматизация</h3></div>
-          <p>Убираем повторяющуюся ручную работу и связываем между собой сервисы, которыми вы уже пользуетесь.</p>
-          <ul>
-            <li>Скрипты и интеграции между системами</li>
-            <li>Автоматические отчёты, выгрузки, уведомления</li>
-            <li>Разбор процесса: что автоматизировать первым</li>
-          </ul>
-          <div class="for"><b>Подходит, если</b>сотрудники каждую неделю делают одно и то же вручную.</div>
-        </article>
-        <article class="svc" id="svc-sec">
-          <div class="svc-top"><span class="tag">D</span><h3>Информационная безопасность</h3></div>
-          <p>Проверяю, насколько защищены ваши сайт, серверы и офисная сеть, и закрываю найденные слабые места.</p>
-          <ul>
-            <li>Аудит серверов, сайтов и локальной сети</li>
-            <li>Доступы, пароли, двухфакторная защита</li>
-            <li>Резервные копии и план восстановления</li>
-          </ul>
-          <div class="for"><b>Подходит, если</b>данные компании лежат на одном компьютере или без копий.</div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="sec" id="works">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">Работы</p>
-        <h2>Примеры проектов</h2>
-        <p>Выберите направление, чтобы посмотреть, как выглядит результат. Проекты с пометкой «Концепт» показывают подход и не являются заказами клиентов.</p>
-      </div>
-      <div class="works-bar">
-        <div class="filters" id="filters" role="group" aria-label="Фильтр по направлению"></div>
-      </div>
-      <div class="works" id="works-grid" aria-live="polite"><p class="works-note">Загружаю примеры…</p></div>
-    </div>
-  </section>
-
-  <section class="sec" id="approach">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">Подход</p>
-        <h2>Проект живёт после запуска</h2>
-        <p>Работа системным администратором показала, где решения ломаются на практике. Этот опыт я вкладываю в каждый проект.</p>
-      </div>
-      <div class="principles">
-        <div class="principle">
-          <h3>Думаю о поддержке с первого дня</h3>
-          <p>Мониторинг, резервные копии и документация входят в проект. Вы получаете систему, которую можно обслуживать.</p>
-        </div>
-        <div class="principle">
-          <h3>Безопасность по умолчанию</h3>
-          <p>Разграничение доступов, обновления и проверка уязвимостей настраиваются в каждом проекте, а не по отдельному заказу.</p>
-        </div>
-        <div class="principle">
-          <h3>Прямой разговор</h3>
-          <p>Вы общаетесь с тем, кто пишет код. Смета и сроки фиксируются письменно до начала работы.</p>
-        </div>
-      </div>
-
-      <div class="sec-head" style="margin-top: clamp(48px, 7vw, 80px);">
-        <h2>Как проходит работа</h2>
-      </div>
-      <ol class="steps">
-        <li><span class="n">01</span><h3>Разговор</h3><p>Разбираем задачу, сроки и бюджет. Вы объясняете, что нужно, я задаю уточняющие вопросы.</p></li>
-        <li><span class="n">02</span><h3>Смета и план</h3><p>Получаете письменный план с этапами и стоимостью. Начинаем после вашего согласия.</p></li>
-        <li><span class="n">03</span><h3>Разработка</h3><p>Показываю промежуточные версии, чтобы вы могли поправить курс до финала.</p></li>
-        <li><span class="n">04</span><h3>Запуск и поддержка</h3><p>Публикую проект, объясняю, как им пользоваться, настраиваю копии и мониторинг.</p></li>
+<main class="wrap">
+  <section id="view-login" class="card">
+    <p class="eyebrow">Вход</p>
+    <h1>Управление работами</h1>
+    <p class="muted">Для входа нужен личный токен GitHub с доступом к репозиторию сайта. Он хранится только в вашем браузере и отправляется только на api.github.com.</p>
+    <details>
+      <summary>Как получить токен</summary>
+      <ol>
+        <li>Откройте GitHub: <strong>Settings → Developer settings → Personal access tokens → Fine-grained tokens</strong> и нажмите <strong>Generate new token</strong>.</li>
+        <li>В поле <strong>Repository access</strong> выберите <strong>Only select repositories</strong> и укажите репозиторий сайта.</li>
+        <li>В <strong>Repository permissions</strong> поставьте <strong>Contents: Read and write</strong>. Других прав не нужно.</li>
+        <li>Выберите срок действия, создайте токен и скопируйте его. GitHub показывает токен один раз.</li>
       </ol>
-    </div>
+    </details>
+    <form id="login" novalidate>
+      <div class="field"><label for="l-token">Токен GitHub</label><input id="l-token" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…"></div>
+      <div class="two">
+        <div class="field"><label for="l-repo">Репозиторий</label><input id="l-repo" type="text" value="bl1ncheg/bl1ncheg.github.io" autocomplete="off" spellcheck="false"></div>
+        <div class="field"><label for="l-branch">Ветка</label><input id="l-branch" type="text" value="main" autocomplete="off" spellcheck="false"></div>
+      </div>
+      <label class="check" for="l-remember"><input id="l-remember" type="checkbox"><span>Запомнить на этом устройстве. Не включайте на чужом компьютере.</span></label>
+      <div class="actions"><button class="btn" type="submit" id="l-submit">Войти</button></div>
+      <p class="status" id="login-status" role="status" aria-live="polite"></p>
+    </form>
   </section>
 
-  <section class="sec" id="cases">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">Типовые задачи</p>
-        <h2>С какими проблемами приходят</h2>
-        <p>Четыре ситуации, которые встречаются чаще всего, и что с ними делается.</p>
-      </div>
-      <div class="tasks">
-        <div class="task">
-          <div><span class="label">Проблема</span>Мастерская принимает заявки в мессенджерах и теряет часть из них.</div>
-          <div class="arrow" aria-hidden="true">→</div>
-          <div class="fix"><span class="label">Решение</span>Сайт с формой и Telegram-бот, который складывает все заявки в одну таблицу.</div>
+  <section id="view-app" hidden>
+    <div style="display:grid;gap:32px;">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+          <div><p class="eyebrow">Новая запись</p><h2 style="margin-top:8px;">Добавить работу</h2></div>
+          <button class="btn small ghost" type="button" id="add-toggle" aria-expanded="false" aria-controls="add-form">Показать форму</button>
         </div>
-        <div class="task">
-          <div><span class="label">Проблема</span>Бухгалтер каждую неделю вручную собирает отчёт из трёх файлов.</div>
-          <div class="arrow" aria-hidden="true">→</div>
-          <div class="fix"><span class="label">Решение</span>Скрипт собирает отчёт сам и присылает его на почту по расписанию.</div>
-        </div>
-        <div class="task">
-          <div><span class="label">Проблема</span>В небольшом офисе все файлы лежат на одном компьютере без копий.</div>
-          <div class="arrow" aria-hidden="true">→</div>
-          <div class="fix"><span class="label">Решение</span>Файловый сервер, раздельные доступы и резервное копирование по расписанию.</div>
-        </div>
-        <div class="task">
-          <div><span class="label">Проблема</span>Сайт стал медленным, на нём появились чужие ссылки.</div>
-          <div class="arrow" aria-hidden="true">→</div>
-          <div class="fix"><span class="label">Решение</span>Аудит, очистка, обновление, закрытие уязвимостей и мониторинг.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="sec" id="about">
-    <div class="wrap about">
-      <div>
-        <p class="eyebrow">Обо мне</p>
-        <h2 style="margin-bottom: 24px;">Программист с опытом администратора</h2>
-        <div class="prose">
-          <p>Я окончил университет по направлению фуллстек разработчик. Параллельно с учёбой <strong>два года работал системным администратором</strong>: обслуживал серверы и сети, настраивал доступы, чинил то, что сломалось в самый неудобный момент.</p>
-          <p>HEV Studio объединяет эти два навыка. Я пишу код и сам знаю, как он будет работать на сервере через год, поэтому закладываю надёжность в проект сразу.</p>
-        </div>
-      </div>
-      <div>
-        <p class="stack-title">Рабочие инструменты</p>
-        <div class="chips">
-          <span class="chip">Linux</span><span class="chip">Windows Server</span><span class="chip">Docker</span><span class="chip">Nginx</span><span class="chip">PostgreSQL</span><span class="chip">Python</span><span class="chip">JavaScript</span><span class="chip">Git</span><span class="chip">Bash</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="sec" id="contact">
-    <div class="wrap contact">
-      <div>
-        <p class="eyebrow">Контакты</p>
-        <h2>Расскажите о задаче</h2>
-        <p style="margin-top: 16px; color: var(--muted); max-width: 46ch;">Заполните короткую анкету. Страница соберёт текст заявки, который можно скопировать и отправить мне на почту. Отвечаю в течение рабочего дня.</p>
-        <div class="mail">
-          <p class="stack-title">Почта</p>
-          <code data-email>hello@hev-studio.example</code>
-        </div>
-      </div>
-      <div>
-        <form id="brief" novalidate>
+        <form id="add-form" hidden novalidate>
           <div class="two">
-            <div class="field"><label for="f-name">Имя</label><input id="f-name" name="name" type="text" autocomplete="name" required></div>
-            <div class="field"><label for="f-contact">Как с вами связаться</label><input id="f-contact" name="contact" type="text" placeholder="Почта или Telegram" required></div>
+            <div class="field"><label for="w-title">Название</label><input id="w-title" type="text" maxlength="80"></div>
+            <div class="field">
+              <label for="w-cat">Направление</label>
+              <select id="w-cat">
+                <option value="A">A · Сайты и веб-сервисы</option>
+                <option value="B">B · Приложения и боты</option>
+                <option value="C">C · Автоматизация</option>
+                <option value="D">D · Безопасность</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label for="w-desc">Описание</label><textarea id="w-desc" maxlength="400" placeholder="Что сделано и какую задачу решает"></textarea></div>
+          <div class="two">
+            <div class="field"><label for="w-tags">Технологии через запятую</label><input id="w-tags" type="text" placeholder="Python, Docker, Nginx"></div>
+            <div class="field"><label for="w-link">Ссылка на проект</label><input id="w-link" type="url" placeholder="https://"></div>
           </div>
           <div class="field">
-            <label for="f-service">Что нужно</label>
-            <select id="f-service" name="service">
-              <option>Сайт или веб-сервис</option>
-              <option>Приложение или бот</option>
-              <option>Автоматизация</option>
-              <option>Безопасность и аудит</option>
-              <option>Пока не знаю, нужна консультация</option>
-            </select>
+            <label for="w-image">Обложка</label>
+            <input id="w-image" type="file" accept="image/png,image/jpeg,image/webp">
+            <span class="hint">Необязательно. Изображение сожмётся до 1400 пикселей и сохранится в папке uploads репозитория.</span>
           </div>
-          <div class="field"><label for="f-msg">Задача в двух словах</label><textarea id="f-msg" name="message" required></textarea></div>
-          <button class="btn" type="submit">Собрать заявку</button>
-          <p id="f-error" class="note" role="alert" hidden style="color: var(--accent-ink); font-size: 0.9rem;">Заполните имя, контакт и описание задачи.</p>
+          <label class="check" for="w-concept"><input id="w-concept" type="checkbox"><span>Это концепт или учебный проект, а не заказ клиента</span></label>
+          <div class="actions"><button class="btn" type="submit" id="w-submit">Опубликовать</button></div>
         </form>
-        <div class="result" id="result" hidden>
-          <pre id="brief-text"></pre>
-          <div class="row">
-            <button class="btn" type="button" id="copy">Скопировать текст</button>
-            <span class="note" id="copy-note">Вставьте текст в письмо на адрес слева.</span>
-          </div>
-        </div>
+      </div>
+
+      <div class="card">
+        <div><p class="eyebrow">Опубликовано</p><h2 style="margin-top:8px;">Все работы</h2></div>
+        <p class="status" id="app-status" role="status" aria-live="polite"></p>
+        <div class="list" id="list"></div>
       </div>
     </div>
   </section>
 </main>
 
-<div class="hazard" aria-hidden="true"></div>
-
-<footer>
-  <div class="wrap">
-    <span>© 2026 HEV Studio</span>
-    <span>Сайты · Приложения · Автоматизация · Безопасность</span>
-  </div>
-</footer>
-
-<script>
-(function () {
-  var form = document.getElementById('brief');
-  var result = document.getElementById('result');
-  var out = document.getElementById('brief-text');
-  var err = document.getElementById('f-error');
-  var note = document.getElementById('copy-note');
-  var defaultNote = note.textContent;
-
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var name = form.elements.name.value.trim();
-    var contact = form.elements.contact.value.trim();
-    var msg = form.elements.message.value.trim();
-    var service = form.elements.service.value;
-    if (!name || !contact || !msg) { err.hidden = false; result.hidden = true; return; }
-    err.hidden = true;
-    out.textContent = 'Здравствуйте! Меня зовут ' + name + '.\nИнтересует: ' + service + '.\n\nЗадача: ' + msg + '\n\nСвязаться со мной: ' + contact;
-    note.textContent = defaultNote;
-    result.hidden = false;
-  });
-
-  document.getElementById('copy').addEventListener('click', function () {
-    var text = out.textContent;
-    function fallback() {
-      try {
-        var r = document.createRange();
-        r.selectNodeContents(out);
-        var s = window.getSelection();
-        s.removeAllRanges();
-        s.addRange(r);
-        note.textContent = 'Текст выделен. Нажмите Ctrl+C или «Копировать» в меню.';
-      } catch (x) {
-        note.textContent = 'Выделите текст вручную и скопируйте его.';
-      }
-    }
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(function () {
-        note.textContent = 'Скопировано. Вставьте текст в письмо.';
-      }).catch(fallback);
-    } else { fallback(); }
-  });
-})();
-</script>
-
-<script>
-(function () {
-  var root = document.documentElement;
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduce) return;
-
-  /* scroll progress bar and gliding hazard stripes */
-  var bar = document.createElement('div');
-  bar.className = 'progress';
-  bar.setAttribute('aria-hidden', 'true');
-  document.body.appendChild(bar);
-
-  var target = 0, cur = 0, raf = 0;
-  function apply() { root.style.setProperty('--shift', (cur % 32).toFixed(2) + 'px'); }
-  function frame() {
-    cur += (target - cur) * 0.14;
-    if (Math.abs(target - cur) < 0.05) { cur = target; raf = 0; } else { raf = window.requestAnimationFrame(frame); }
-    apply();
-  }
-  function onScroll() {
-    var y = window.scrollY || 0;
-    var max = (root.scrollHeight - window.innerHeight) || 1;
-    root.style.setProperty('--p', Math.min(1, y / max).toFixed(4));
-    target = y * 0.6;
-    if (!raf) raf = window.requestAnimationFrame(frame);
-  }
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll);
-  target = (window.scrollY || 0) * 0.6; cur = target; apply(); onScroll();
-
-  /* reveal on scroll */
-  if (!('IntersectionObserver' in window)) return;
-
-  function countUp(b) {
-    var n = parseInt(b.textContent, 10);
-    if (!n || n < 1) return;
-    var t0 = null, dur = 900;
-    b.textContent = '0';
-    function step(ts) {
-      if (t0 === null) t0 = ts;
-      var p = Math.min(1, (ts - t0) / dur);
-      b.textContent = String(Math.round(n * (1 - Math.pow(1 - p, 3))));
-      if (p < 1) window.requestAnimationFrame(step); else b.textContent = String(n);
-    }
-    window.requestAnimationFrame(step);
-  }
-
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (en) {
-      if (!en.isIntersecting) return;
-      var t = en.target;
-      t.classList.add('in');
-      io.unobserve(t);
-      if (t.classList.contains('fact')) { var b = t.querySelector('b'); if (b) countUp(b); }
-    });
-  }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
-
-  var items = document.querySelectorAll('.sec-head, .svc, .principle, .steps li, .task, .about > div, .contact > div, .fact, .works-bar');
-  Array.prototype.forEach.call(items, function (t) {
-    var idx = Array.prototype.indexOf.call(t.parentNode.children, t);
-    t.style.setProperty('--d', Math.min(idx, 5) * 90 + 'ms');
-    t.classList.add('reveal');
-    io.observe(t);
-  });
-})();
-</script>
-
 <script>
 (function () {
   var CATS = { A: 'Сайты и веб-сервисы', B: 'Приложения и боты', C: 'Автоматизация', D: 'Безопасность' };
-  var SHORT = { A: 'Сайты', B: 'Приложения', C: 'Автоматизация', D: 'Безопасность' };
-  var grid = document.getElementById('works-grid');
-  var filtersEl = document.getElementById('filters');
-  var works = [];
-  var state = 'loading';
-  var filter = 'all';
+  var KEY = 'hev_admin';
+  var $ = function (id) { return document.getElementById(id); };
+  var cfg = null, works = [], sha = null, busy = false, pendingDelete = null;
 
+  /* ---------- helpers ---------- */
   function el(tag, cls, text) {
     var n = document.createElement(tag);
     if (cls) n.className = cls;
     if (text != null) n.textContent = text;
     return n;
   }
-  function valid(w) { return w && typeof w.id === 'string' && typeof w.title === 'string' && CATS[w.category]; }
+  function b64enc(str) {
+    var bytes = new TextEncoder().encode(str), bin = '';
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  }
+  function b64dec(b64) {
+    var bin = atob(b64.replace(/\s/g, '')), bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+  function blobToB64(blob) {
+    return new Promise(function (res, rej) {
+      var r = new FileReader();
+      r.onload = function () { res(String(r.result).split(',')[1]); };
+      r.onerror = function () { rej(new Error('read')); };
+      r.readAsDataURL(blob);
+    });
+  }
   function safeUrl(u) {
     try { var x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') ? x.href : ''; } catch (e) { return ''; }
   }
-  function safeImg(p) { return /^uploads\/[A-Za-z0-9._-]+$/.test(p || '') ? p : ''; }
+  function validWork(w) { return w && typeof w.id === 'string' && typeof w.title === 'string' && CATS[w.category]; }
+  function newId() { return 'w' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function setStatus(id, t, isErr) { var s = $(id); s.textContent = t || ''; s.classList.toggle('err', !!(t && isErr)); }
 
-  function renderFilters() {
-    filtersEl.textContent = '';
-    var items = [['all', 'Все']].concat(Object.keys(CATS).map(function (k) { return [k, k + ' · ' + SHORT[k]]; }));
-    items.forEach(function (it) {
-      var b = el('button', 'filter', it[1]);
-      b.type = 'button';
-      b.setAttribute('aria-pressed', String(filter === it[0]));
-      b.addEventListener('click', function () { filter = it[0]; renderFilters(); renderWorks(); });
-      filtersEl.appendChild(b);
+  function explain(e) {
+    var s = e && e.status;
+    if (s === 401) return 'GitHub не принял токен. Проверьте, что он скопирован целиком и не истёк.';
+    if (s === 403) return 'У токена нет прав. Нужен доступ Contents: Read and write к репозиторию сайта.';
+    if (s === 404) return 'Репозиторий или ветка не найдены, либо у токена нет к ним доступа.';
+    if (s === 409 || s === 422) return 'Файл на GitHub изменился. Список обновлён, повторите действие.';
+    if (e instanceof TypeError) return 'Нет соединения с GitHub. Проверьте интернет и повторите.';
+    return 'Не удалось выполнить действие. ' + (e && e.message ? e.message : '');
+  }
+
+  /* ---------- GitHub API ---------- */
+  function gh(method, path, body) {
+    var headers = {
+      'Accept': 'application/vnd.github+json',
+      'Authorization': 'Bearer ' + cfg.token,
+      'X-GitHub-Api-Version': '2022-11-28'
+    };
+    if (body) headers['Content-Type'] = 'application/json';
+    return fetch('https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + path, {
+      method: method, headers: headers, body: body ? JSON.stringify(body) : undefined
+    }).then(function (r) {
+      return r.json().catch(function () { return null; }).then(function (data) {
+        if (!r.ok) {
+          var err = new Error(data && data.message ? data.message : 'HTTP ' + r.status);
+          err.status = r.status;
+          throw err;
+        }
+        return data;
+      });
     });
   }
 
-  function note(t) { return el('p', 'works-note', t); }
-
-  function card(w) {
-    var a = el('article', 'work');
-    var cover = el('div', 'cover');
-    function plate() { cover.textContent = ''; cover.classList.add('plate-cover'); cover.appendChild(el('span', 'plate', w.category)); }
-    var imgPath = safeImg(w.image);
-    if (imgPath) {
-      var img = el('img');
-      img.alt = w.title;
-      img.loading = 'lazy';
-      img.addEventListener('error', plate);
-      img.src = imgPath;
-      cover.appendChild(img);
-    } else { plate(); }
-    a.appendChild(cover);
-
-    var body = el('div', 'body');
-    var meta = el('div', 'meta');
-    meta.appendChild(el('span', null, w.category + ' · ' + CATS[w.category]));
-    if (w.concept) meta.appendChild(el('span', 'badge', 'Концепт'));
-    body.appendChild(meta);
-    body.appendChild(el('h3', null, w.title));
-    if (w.description) body.appendChild(el('p', null, w.description));
-    if (Array.isArray(w.tags) && w.tags.length) {
-      var tags = el('div', 'tags');
-      w.tags.forEach(function (t) { tags.appendChild(el('span', null, String(t))); });
-      body.appendChild(tags);
-    }
-    var foot = el('div', 'foot');
-    var href = w.link ? safeUrl(w.link) : '';
-    if (href) {
-      var open = el('a', 'open', 'Открыть проект');
-      open.href = href; open.target = '_blank'; open.rel = 'noopener noreferrer';
-      foot.appendChild(open);
-    }
-    body.appendChild(foot);
-    a.appendChild(body);
-    return a;
+  function loadWorksChecked() {
+    return gh('GET', '').then(function () {
+      return gh('GET', '/contents/works.json?ref=' + encodeURIComponent(cfg.branch)).then(function (d) {
+        sha = d.sha;
+        var parsed = JSON.parse(b64dec(d.content));
+        works = (parsed && Array.isArray(parsed.works)) ? parsed.works.filter(validWork) : [];
+      }, function (e) {
+        if (e.status === 404) { sha = null; works = []; return; }
+        throw e;
+      });
+    });
   }
 
-  function renderWorks() {
-    grid.textContent = '';
-    if (state === 'loading') { grid.appendChild(note('Загружаю примеры…')); return; }
-    if (state === 'error') { grid.appendChild(note('Не удалось загрузить примеры. Обновите страницу.')); return; }
-    var list = works.filter(function (w) { return filter === 'all' || w.category === filter; });
-    if (!list.length) {
-      grid.appendChild(note(works.length ? 'В этом направлении пока нет примеров.' : 'Примеры работ скоро появятся здесь.'));
+  function saveWorks(next, message) {
+    var body = { message: message, content: b64enc(JSON.stringify({ works: next }, null, 2) + '\n'), branch: cfg.branch };
+    if (sha) body.sha = sha;
+    return gh('PUT', '/contents/works.json', body).then(function (d) {
+      sha = d.content.sha;
+      works = next;
+    });
+  }
+
+  function uploadImage(blob, path) {
+    return blobToB64(blob).then(function (b) {
+      return gh('PUT', '/contents/' + path, { message: 'Добавить обложку ' + path, content: b, branch: cfg.branch });
+    });
+  }
+  function deleteFile(path) {
+    return gh('GET', '/contents/' + path + '?ref=' + encodeURIComponent(cfg.branch)).then(function (d) {
+      return gh('DELETE', '/contents/' + path, { message: 'Удалить ' + path, sha: d.sha, branch: cfg.branch });
+    });
+  }
+  function shrink(file) {
+    return createImageBitmap(file).then(function (bmp) {
+      var s = Math.min(1, 1400 / Math.max(bmp.width, bmp.height));
+      var c = document.createElement('canvas');
+      c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
+      c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+      return new Promise(function (res) { c.toBlob(function (b) { res(b || file); }, 'image/jpeg', 0.86); });
+    }).catch(function () { return file; });
+  }
+
+  /* ---------- storage of login ---------- */
+  function readSaved() {
+    var v = null;
+    try { v = sessionStorage.getItem(KEY) || localStorage.getItem(KEY); } catch (e) {}
+    if (!v) return null;
+    try { var o = JSON.parse(v); return (o && o.token && o.owner && o.repo) ? o : null; } catch (e) { return null; }
+  }
+  function writeSaved(remember) {
+    clearSaved();
+    var v = JSON.stringify({ token: cfg.token, owner: cfg.owner, repo: cfg.repo, branch: cfg.branch });
+    try { (remember ? localStorage : sessionStorage).setItem(KEY, v); } catch (e) {}
+  }
+  function clearSaved() {
+    try { sessionStorage.removeItem(KEY); } catch (e) {}
+    try { localStorage.removeItem(KEY); } catch (e) {}
+  }
+
+  /* ---------- views ---------- */
+  function showLogin(msg) {
+    $('view-login').hidden = false; $('view-app').hidden = true; $('logout').hidden = true;
+    setStatus('login-status', msg || '', !!msg);
+    $('l-submit').disabled = false;
+  }
+  function showApp() {
+    $('view-login').hidden = true; $('view-app').hidden = false; $('logout').hidden = false;
+    $('l-token').value = '';
+    renderList();
+  }
+
+  function renderList() {
+    var list = $('list');
+    list.textContent = '';
+    if (!works.length) { list.appendChild(el('p', 'empty', 'Пока нет ни одной работы. Добавьте первую выше.')); return; }
+    works.forEach(function (w) {
+      var row = el('div', 'row');
+      var th = el('div', 'thumb');
+      th.textContent = w.category;
+      if (w.image && /^uploads\/[A-Za-z0-9._-]+$/.test(w.image)) {
+        var img = el('img');
+        img.alt = '';
+        img.addEventListener('error', function () { th.textContent = w.category; });
+        img.src = 'https://raw.githubusercontent.com/' + cfg.owner + '/' + cfg.repo + '/' + cfg.branch + '/' + w.image;
+        th.textContent = '';
+        th.appendChild(img);
+      }
+      row.appendChild(th);
+      var info = el('div');
+      info.appendChild(el('h3', null, w.title));
+      info.appendChild(el('p', 'meta', w.category + ' · ' + CATS[w.category] + (w.concept ? ' · концепт' : '')));
+      row.appendChild(info);
+      var ctrl = el('div', 'ctrl');
+      if (pendingDelete === w.id) {
+        var yes = el('button', 'btn small', 'Да, удалить'); yes.type = 'button';
+        yes.addEventListener('click', function () { removeWork(w.id); });
+        var no = el('button', 'link-btn', 'Отмена'); no.type = 'button';
+        no.addEventListener('click', function () { pendingDelete = null; renderList(); });
+        ctrl.appendChild(yes); ctrl.appendChild(no);
+      } else {
+        var del = el('button', 'link-btn', 'Удалить'); del.type = 'button';
+        del.addEventListener('click', function () { pendingDelete = w.id; setStatus('app-status', ''); renderList(); });
+        ctrl.appendChild(del);
+      }
+      row.appendChild(ctrl);
+      list.appendChild(row);
+    });
+  }
+
+  function refreshAfterError(e) {
+    setStatus('app-status', explain(e), true);
+    if (e && (e.status === 409 || e.status === 422)) {
+      return loadWorksChecked().then(renderList, function () {});
+    }
+  }
+
+  /* ---------- actions ---------- */
+  function removeWork(id) {
+    if (busy) return;
+    busy = true;
+    setStatus('app-status', 'Удаляю…');
+    var target = works.filter(function (w) { return w.id === id; })[0];
+    var next = works.filter(function (w) { return w.id !== id; });
+    saveWorks(next, 'Удалить работу: ' + (target ? target.title : id)).then(function () {
+      pendingDelete = null;
+      setStatus('app-status', 'Работа удалена. Изменения появятся на сайте через 1–2 минуты.');
+      if (target && target.image) { deleteFile(target.image).catch(function () {}); }
+    }).catch(function (e) { return refreshAfterError(e); })
+      .then(function () { busy = false; renderList(); });
+  }
+
+  $('login').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var token = $('l-token').value.trim();
+    var parts = $('l-repo').value.trim().split('/');
+    var branch = $('l-branch').value.trim() || 'main';
+    if (!token || parts.length !== 2 || !parts[0] || !parts[1]) {
+      setStatus('login-status', 'Введите токен и репозиторий в формате владелец/репозиторий.', true);
       return;
     }
-    list.forEach(function (w) { grid.appendChild(card(w)); });
+    cfg = { token: token, owner: parts[0], repo: parts[1], branch: branch };
+    $('l-submit').disabled = true;
+    setStatus('login-status', 'Проверяю доступ…');
+    loadWorksChecked().then(function () {
+      writeSaved($('l-remember').checked);
+      showApp();
+    }).catch(function (err) {
+      cfg = null;
+      showLogin(explain(err));
+    });
+  });
+
+  $('logout').addEventListener('click', function () {
+    clearSaved(); cfg = null; works = []; sha = null; pendingDelete = null;
+    showLogin('');
+  });
+
+  $('add-toggle').addEventListener('click', function () {
+    var f = $('add-form');
+    f.hidden = !f.hidden;
+    $('add-toggle').setAttribute('aria-expanded', String(!f.hidden));
+    $('add-toggle').textContent = f.hidden ? 'Показать форму' : 'Скрыть форму';
+    if (!f.hidden) $('w-title').focus();
+  });
+
+  $('add-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (busy) return;
+    var title = $('w-title').value.trim();
+    var desc = $('w-desc').value.trim();
+    var linkRaw = $('w-link').value.trim();
+    var file = $('w-image').files[0];
+    if (!title || !desc) { setStatus('app-status', 'Укажите название и описание.', true); return; }
+    var link = '';
+    if (linkRaw) { link = safeUrl(linkRaw); if (!link) { setStatus('app-status', 'Ссылка должна начинаться с http:// или https://.', true); return; } }
+    var tags = $('w-tags').value.split(',').map(function (t) { return t.trim().slice(0, 24); }).filter(Boolean).slice(0, 6);
+    var work = { id: newId(), title: title, category: $('w-cat').value, description: desc, tags: tags, link: link, image: '', concept: $('w-concept').checked };
+
+    busy = true; $('w-submit').disabled = true;
+    setStatus('app-status', file ? 'Загружаю обложку и сохраняю…' : 'Сохраняю…');
+    var step = Promise.resolve();
+    if (file) {
+      var path = 'uploads/' + work.id + '.jpg';
+      step = shrink(file).then(function (blob) { return uploadImage(blob, path); }).then(function () { work.image = path; });
+    }
+    step.then(function () { return saveWorks([work].concat(works), 'Добавить работу: ' + title); }).then(function () {
+      $('add-form').reset();
+      $('add-form').hidden = true;
+      $('add-toggle').setAttribute('aria-expanded', 'false');
+      $('add-toggle').textContent = 'Показать форму';
+      setStatus('app-status', 'Работа добавлена. Изменения появятся на сайте через 1–2 минуты.');
+    }).catch(function (err) {
+      if (work.image) { deleteFile(work.image).catch(function () {}); }
+      return refreshAfterError(err);
+    }).then(function () { busy = false; $('w-submit').disabled = false; renderList(); });
+  });
+
+  /* ---------- start ---------- */
+  var saved = readSaved();
+  if (saved) {
+    cfg = saved;
+    $('l-submit').disabled = true;
+    setStatus('login-status', 'Проверяю сохранённый вход…');
+    loadWorksChecked().then(showApp).catch(function (err) {
+      cfg = null; clearSaved(); showLogin(explain(err));
+    });
   }
-
-  renderFilters();
-  renderWorks();
-
-  fetch('works.json', { cache: 'no-store' })
-    .then(function (r) { if (!r.ok) throw new Error('load'); return r.json(); })
-    .then(function (d) { works = (d && Array.isArray(d.works)) ? d.works.filter(valid) : []; state = 'ready'; })
-    .catch(function () { state = 'error'; })
-    .then(renderWorks);
 })();
 </script>
 </body>
