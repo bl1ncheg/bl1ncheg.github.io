@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Black Mesa · Админ-панель</title>
+<title>HEV Studio · Админ-панель</title>
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
@@ -93,13 +93,32 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
   .thumb { width: 48px; height: 48px; }
   .row .ctrl { grid-column: 1 / -1; justify-content: flex-start; }
 }
+
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+.top { animation: fade 0.6s ease both; }
+.card { animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.card + .card { animation-delay: 0.1s; }
+.row { animation: fade 0.4s ease both; transition: background-color 0.25s ease; }
+.row:hover { background: var(--surface); }
+.empty, .status:not(:empty) { animation: fade 0.4s ease both; }
+#add-form:not([hidden]) { animation: rise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.btn { transition: translate 0.25s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.25s ease, background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease; }
+.btn:hover { translate: 0 -3px; }
+.btn:active { translate: 0 0; }
+.link-btn, .top-actions a { transition: color 0.25s ease; }
+.brand svg, .brand img { transition: scale 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.brand:hover svg, .brand:hover img { scale: 1.08; }
+.field input, .field select, .field textarea { transition: border-color 0.25s ease, box-shadow 0.25s ease; }
+.field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
 <header class="wrap top">
   <a class="brand" href="./" aria-label="На сайт">
     <svg viewBox="0 0 40 28" aria-hidden="true"><polygon points="0,26 9,4 31,4 40,26" fill="var(--accent)"/><rect x="0" y="22" width="40" height="4" fill="var(--bg)"/></svg><img src="logo.png" alt="" hidden onload="this.hidden=false;this.previousElementSibling.hidden=true">
-    <span><b>BLACK MESA</b><small>Админ-панель</small></span>
+    <span><b>HEV STUDIO</b><small>Админ-панель</small></span>
   </a>
   <div class="top-actions">
     <a href="./">Открыть сайт</a>
@@ -180,7 +199,7 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
 <script>
 (function () {
   var CATS = { A: 'Сайты и веб-сервисы', B: 'Приложения и боты', C: 'Автоматизация', D: 'Безопасность' };
-  var KEY = 'bm_admin';
+  var KEY = 'hev_admin';
   var $ = function (id) { return document.getElementById(id); };
   var cfg = null, works = [], sha = null, busy = false, pendingDelete = null;
 
