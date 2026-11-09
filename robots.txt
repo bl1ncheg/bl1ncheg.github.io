@@ -1,0 +1,2 @@
+User-agent: *
+Sitemap: https://bl1ncheg.github.io/sitemap.xml
