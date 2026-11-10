@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Политика обработки персональных данных · HEV Studio</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Oswald:wght@500;600;700&display=swap">
+<style>
+:root {
+  --bg: #0d1013; --surface: #151a1f; --line: #29313a; --fg: #e9ecee; --muted: #98a3ad;
+  --accent: #ffc20e; --on-accent: #0d1013; --accent-ink: #ffc20e;
+  --font-display: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+  --font-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root { --bg: #e7eaec; --surface: #f6f7f8; --line: #c2c9cf; --fg: #11161a; --muted: #4d5964; --on-accent: #11161a; --accent-ink: #7a5400; color-scheme: light; }
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.65 var(--font-body); -webkit-text-size-adjust: 100%; }
+a { color: var(--accent-ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.wrap { max-width: 800px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header { padding-block: 20px; border-bottom: 1px solid var(--line); }
+header a { font: 500 0.78rem/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-decoration: none; }
+header a:hover { color: var(--fg); }
+main { padding-block: 40px 72px; display: grid; gap: 28px; }
+h1, h2 { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.02em; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.05; font-weight: 700; }
+h2 { font-size: 1.35rem; font-weight: 600; margin-bottom: 10px; }
+p, li { margin: 0; overflow-wrap: anywhere; }
+ul { margin: 8px 0 0; padding-left: 22px; display: grid; gap: 6px; }
+.meta { font: 400 0.8rem/1.4 var(--font-mono); letter-spacing: 0.06em; color: var(--muted); }
+mark { background: var(--accent); color: var(--on-accent); padding: 1px 5px; }
+.draft { border: 2px solid var(--accent); padding: 18px; display: grid; gap: 8px; background: var(--surface); }
+.draft b { font: 600 1.05rem/1.2 var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; }
+section { display: grid; gap: 4px; }
+</style>
+</head>
+<body>
+<header class="wrap"><a href="./">← На сайт</a></header>
+<main class="wrap">
+  <div class="draft" id="draft">
+    <b>Шаблон: заполните и проверьте перед публикацией</b>
+    <p>Замените все поля, выделенные жёлтым, своими данными. Проверьте текст у юриста, потому что шаблон не заменяет юридическую консультацию. Когда закончите, удалите этот блок (элемент с id="draft").</p>
+  </div>
+
+  <div>
+    <h1>Политика обработки персональных данных</h1>
+    <p class="meta" style="margin-top:10px;">Редакция от 10 ноября 2026 года</p>
+  </div>
+
+  <section>
+    <h2>1. Оператор</h2>
+    <p>Оператор персональных данных: <mark>Енин Дмитрий Сергеевич</mark>, ИНН <mark>773271793602</mark>, адрес: <mark>Россия, Москва, Солнцевский проспект, 14</mark>. Сайт: HEV Studio. Контакт для обращений по персональным данным: <mark>support@hev-studio.tech</mark>.</p>
+  </section>
+
+  <section>
+    <h2>2. Для чего обрабатываются данные</h2>
+    <ul>
+      <li>принять заявку, отправленную через форму на сайте;</li>
+      <li>связаться с отправителем, чтобы обсудить задачу и условия работы;</li>
+      <li>вести учёт обращений и подтвердить получение согласия.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>3. Правовое основание</h2>
+    <p>Согласие субъекта персональных данных (пункт 1 части 1 статьи 6 Федерального закона от 27.07.2006 № 152-ФЗ «О персональных данных»). Согласие даётся отметкой в форме перед отправкой заявки. Время согласия и версия этой политики сохраняются вместе с заявкой.</p>
+  </section>
+
+  <section>
+    <h2>4. Какие данные обрабатываются</h2>
+    <p>Имя, контакт для ответа (телефон, электронная почта или имя в мессенджере), выбранный тип услуги, текст заявки. Для защиты от спама сохраняется обезличенный хеш сетевого адреса, по которому нельзя восстановить сам адрес. Специальные категории и биометрические данные не обрабатываются.</p>
+  </section>
+
+  <section>
+    <h2>5. Как обрабатываются данные</h2>
+    <p>Сбор, запись, хранение, использование, уточнение, удаление и уничтожение данных, в том числе с использованием средств автоматизации. Данные записываются в базу данных, расположенную на территории Российской Федерации (облачная платформа Yandex Cloud). Данные не передаются третьим лицам и не передаются за пределы Российской Федерации.</p>
+    <p>Уведомления о новых заявках в мессенджер содержат только номер заявки и тип услуги. Имя, контакты и текст заявки в мессенджер не отправляются.</p>
+  </section>
+
+  <section>
+    <h2>6. Сроки хранения</h2>
+    <p>Данные хранятся <mark>12 месяцев</mark> с момента получения заявки, если не требуется более длительное хранение для исполнения договора или закона. После этого данные удаляются. Данные также удаляются по требованию субъекта.</p>
+  </section>
+
+  <section>
+    <h2>7. Права субъекта</h2>
+    <p>Вы вправе получить сведения о том, какие ваши данные обрабатываются, потребовать их уточнить, заблокировать или удалить, а также отозвать согласие. Для этого напишите на <mark>support@hev-studio.tech</mark>. Ответ будет отправлен в срок, установленный законом. Вы также вправе обратиться в Роскомнадзор или в суд.</p>
+  </section>
+
+  <section>
+    <h2>8. Файлы cookie и аналитика</h2>
+    <p>Сайт не использует файлы cookie и системы веб-аналитики.</p>
+  </section>
+
+  <section>
+    <h2>9. Изменения политики</h2>
+    <p>Оператор вправе изменять политику. Актуальная редакция всегда доступна на этой странице.</p>
+  </section>
+</main>
+</body>
+</html>
