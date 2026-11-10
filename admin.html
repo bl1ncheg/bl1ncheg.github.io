@@ -485,11 +485,11 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
   function saved() { try { return sessionStorage.getItem(KEY); } catch (e) { return null; } }
   function save(v) { try { if (v) sessionStorage.setItem(KEY, v); else sessionStorage.removeItem(KEY); } catch (e) {} }
 
-  function api(method, path, body) {
-    return fetch(API + path, {
-      method: method,
-      headers: Object.assign({ 'Authorization': 'Bearer ' + pass }, body ? { 'Content-Type': 'application/json' } : {}),
-      body: body ? JSON.stringify(body) : undefined
+  function api(action, extra) {
+    return fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+      body: JSON.stringify(Object.assign({ action: action, token: pass }, extra || {}))
     }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (d) {
         if (!r.ok) { var e = new Error('http'); e.status = r.status; throw e; }
@@ -499,7 +499,8 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
   }
   function explain(e) {
     if (e && e.status === 401) return 'Пароль не подошёл.';
-    if (e && e.status === 403) return 'Сервер не разрешил запрос с этого адреса. Проверьте ALLOWED_ORIGIN в настройках Worker.';
+    if (e && e.status === 403) return 'Сервер не разрешил запрос с этого адреса. Проверьте ALLOWED_ORIGIN в настройках функции.';
+    if (e && e.status >= 500) return 'Сервер заявок вернул ошибку. Посмотрите журнал функции в Yandex Cloud.';
     return 'Не удалось связаться с сервером заявок. Проверьте адрес в config.js и интернет.';
   }
 
@@ -529,7 +530,7 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
       });
       sel.addEventListener('change', function () {
         var prev = x.status, next = sel.value;
-        api('PATCH', '/requests/' + x.id, { status: next }).then(function () { x.status = next; card.className = 'req s-' + next; emitCount(); setStatus('Статус обновлён.'); })
+        api('setStatus', { id: x.id, status: next }).then(function () { x.status = next; card.className = 'req s-' + next; emitCount(); setStatus('Статус обновлён.'); })
           .catch(function (e) { sel.value = prev; setStatus(explain(e), true); });
       });
       ctrl.appendChild(sel);
@@ -551,7 +552,7 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
 
   function load(silent) {
     if (!silent) setStatus('Загружаю заявки…');
-    return api('GET', '/requests').then(function (d) {
+    return api('list').then(function (d) {
       var next = Array.isArray(d.requests) ? d.requests : [];
       var changed = JSON.stringify(next) !== JSON.stringify(items);
       items = next;
@@ -562,7 +563,7 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
   }
   function remove(id) {
     if (busy) return; busy = true;
-    api('DELETE', '/requests/' + id).then(function () {
+    api('delete', { id: id }).then(function () {
       items = items.filter(function (x) { return x.id !== id; }); emitCount();
       pendingDelete = null; setStatus('Заявка удалена.');
     }).catch(function (e) { setStatus(explain(e), true); }).then(function () { busy = false; render(); });
@@ -692,7 +693,7 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
       setTab(want || (okReq ? 'req' : 'works'), false);
 
       if (okReq) {
-        timer = setInterval(function () { if (!document.hidden) window.HEVReq.refresh(true); }, 60000);
+        timer = setInterval(function () { if (!document.hidden) window.HEVReq.refresh(true); }, 180000);
       }
     });
   }
