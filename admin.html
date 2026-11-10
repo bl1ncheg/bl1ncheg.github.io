@@ -139,7 +139,7 @@ code { font: 500 0.9em var(--font-mono); background: var(--bg); padding: 1px 6px
 <body>
 <header class="wrap top">
   <a class="brand" href="./" aria-label="На сайт">
-    <svg viewBox="0 0 40 28" aria-hidden="true"><polygon points="0,26 9,4 31,4 40,26" fill="var(--accent)"/><rect x="0" y="22" width="40" height="4" fill="var(--bg)"/></svg><img src="logo.png" alt="" hidden onload="this.hidden=false;this.previousElementSibling.hidden=true">
+    <svg viewBox="0 0 40 28" aria-hidden="true"><polygon points="0,26 9,4 31,4 40,26" fill="var(--accent)"/><rect x="0" y="22" width="40" height="4" fill="var(--bg)"/></svg><img src="logo.png" alt="" hidden onload="this.hidden=false;this.previousElementSibling.setAttribute('hidden','')">
     <span><b>HEV STUDIO</b><small>Админ-панель</small></span>
   </a>
   <div class="top-actions">
