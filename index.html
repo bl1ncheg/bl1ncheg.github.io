@@ -188,6 +188,7 @@ form { display: grid; gap: 16px; }
 .result .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 .result .note { font-size: 0.9rem; color: var(--muted); }
 .req-number { margin: 0; font: 700 clamp(2rem, 6vw, 3rem)/1 var(--font-display); letter-spacing: 0.06em; color: var(--accent-ink); }
+.check a { color: var(--accent-ink); text-decoration: underline; }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
 footer { border-top: 1px solid var(--line); padding-block: 28px; }
@@ -578,9 +579,10 @@ footer a:hover { color: var(--accent-ink); border-bottom-color: var(--accent); }
             </select>
           </div>
           <div class="field"><label for="f-msg">Задача в двух словах</label><textarea id="f-msg" name="message" required></textarea></div>
+          <label class="check" for="f-consent"><input id="f-consent" type="checkbox"><span>Я даю согласие на обработку моих персональных данных (имя, контакт, текст заявки), чтобы мне ответили, и принимаю <a href="privacy.html" target="_blank" rel="noopener">политику обработки персональных данных</a>.</span></label>
           <div class="hp" aria-hidden="true"><label for="f-site">Сайт</label><input id="f-site" name="website" type="text" tabindex="-1" autocomplete="off"></div>
           <button class="btn" type="submit" id="f-submit">Отправить заявку</button>
-          <p id="f-error" class="note" role="alert" hidden style="color: var(--accent-ink); font-size: 0.9rem;">Заполните имя, контакт и описание задачи.</p>
+          <p id="f-error" class="note" role="alert" hidden style="color: var(--accent-ink); font-size: 0.9rem;"><span id="f-error-text">Заполните имя, контакт и описание задачи.</span></p>
         </form>
         <div class="result" id="result" hidden>
           <p class="stack-title" id="res-title" style="margin:0;"></p>
@@ -602,6 +604,7 @@ footer a:hover { color: var(--accent-ink); border-bottom-color: var(--accent); }
 <footer>
   <div class="wrap">
     <span>© 2026 HEV Studio</span>
+    <a href="privacy.html">Политика обработки персональных данных</a>
     <a href="admin.html">Вход для администратора</a>
     <span>Сайты · Приложения · Автоматизация · Безопасность</span>
   </div>
@@ -655,7 +658,9 @@ footer a:hover { color: var(--accent-ink); border-bottom-color: var(--accent); }
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var d = { name: val('f-name'), contact: val('f-contact'), message: val('f-msg'), service: document.getElementById('f-service').value };
-    if (!d.name || !d.contact || !d.message) { err.hidden = false; result.hidden = true; return; }
+    var errText = document.getElementById('f-error-text');
+    if (!d.name || !d.contact || !d.message) { errText.textContent = 'Заполните имя, контакт и описание задачи.'; err.hidden = false; result.hidden = true; return; }
+    if (!document.getElementById('f-consent').checked) { errText.textContent = 'Отметьте согласие на обработку персональных данных, иначе заявку нельзя отправить.'; err.hidden = false; result.hidden = true; return; }
     err.hidden = true;
     var text = compose(d);
 
@@ -669,10 +674,10 @@ footer a:hover { color: var(--accent-ink); border-bottom-color: var(--accent); }
     var ctl = new AbortController();
     var timer = setTimeout(function () { ctl.abort(); }, 15000);
 
-    fetch(API + '/requests', {
+    fetch(API, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: d.name, contact: d.contact, service: d.service, message: d.message, website: document.getElementById('f-site').value }),
+      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+      body: JSON.stringify({ action: 'submit', consent: true, name: d.name, contact: d.contact, service: d.service, message: d.message, website: document.getElementById('f-site').value }),
       signal: ctl.signal
     }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (data) { return { status: r.status, data: data }; });
